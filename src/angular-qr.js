@@ -3,7 +3,7 @@
 
   angular.module('ja.qr', [])
   .controller('QrCtrl', ['$scope', function($scope){
-    $scope.getTypeNumeber = function(){
+    $scope.getTypeNumber = function(){
       return $scope.typeNumber || 0;
     };
 
@@ -75,9 +75,10 @@
   }])
   .directive('qr', ['$timeout', '$window', function($timeout, $window){
 
+    // noinspection JSUnusedLocalSymbols
     return {
       restrict: 'E',
-      template: '<canvas ng-hide="image"></canvas><img ng-if="image" ng-src="{{canvasImage}}"/>',
+      template: '<canvas ng-hide="image"></canvas><img alt="QR" ng-if="image" ng-src="{{canvasImage}}"/>',
       scope: {
         typeNumber: '=',
         correctionLevel: '=',
@@ -94,9 +95,10 @@
         }
 
         var canvas = element.find('canvas')[0];
+        // noinspection JSUnresolvedVariable
         var canvas2D = !!$window.CanvasRenderingContext2D;
 
-        scope.TYPE_NUMBER = scope.getTypeNumeber();
+        scope.TYPE_NUMBER = scope.getTypeNumber();
         scope.TEXT = scope.getText();
         scope.CORRECTION = scope.getCorrection();
         scope.SIZE = scope.getSize();
@@ -104,11 +106,12 @@
         scope.canvasImage = '';
 
         var draw = function(context, qr, modules, tile){
-          var width = modules*tile;
+          var width  = modules*tile,
+              height = modules*tile;
 
-          var gradient = context.createLinearGradient(0,0, width,width);
+          var gradient = context.createLinearGradient(0,0, width, height);
           gradient.addColorStop(0, '#f00');
-          gradient.addColorStop(.5, '#00f');
+          gradient.addColorStop(0.5, '#00f');
           gradient.addColorStop(1, '#0f0');
 
           for (var row = 0; row < modules; row++) {
@@ -174,7 +177,7 @@
 
           scope.$watch('typeNumber', function(value, old){
             if (value !== old) {
-              scope.TYPE_NUMBER = scope.getTypeNumeber();
+              scope.TYPE_NUMBER = scope.getTypeNumber();
               render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE);
             }
           });
