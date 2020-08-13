@@ -28,13 +28,13 @@
     };
 
     $scope.isNUMBER = function(text){
-      var ALLOWEDCHARS = /^[0-9]*$/;
-      return ALLOWEDCHARS.test(text);
+      var allowedChars = /^[0-9]*$/;
+      return allowedChars.test(text);
     };
 
     $scope.isALPHA_NUM = function(text){
-      var ALLOWEDCHARS = /^[0-9A-Z $%*+\-./:]*$/;
-      return ALLOWEDCHARS.test(text);
+      var allowedChars = /^[0-9A-Z $%*+\-./:]*$/;
+      return allowedChars.test(text);
     };
 
     $scope.is8bit = function(text){
