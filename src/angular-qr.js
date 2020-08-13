@@ -104,12 +104,32 @@
         scope.canvasImage = '';
 
         var draw = function(context, qr, modules, tile){
+          var width = modules*tile;
+
+          var gradient = context.createLinearGradient(0,0, width,width);
+          gradient.addColorStop(0, '#f00');
+          gradient.addColorStop(.5, '#00f');
+          gradient.addColorStop(1, '#0f0');
+
           for (var row = 0; row < modules; row++) {
             for (var col = 0; col < modules; col++) {
               var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
                   h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
-              context.fillStyle = qr.isDark(row, col) ? '#000' : '#fff';
-              context.fillRect(Math.round(col * tile), Math.round(row * tile), w, h);
+              var w2 = w/2,
+                  h2 = h/2;
+              var x = Math.round(col * tile),
+                  y = Math.round(row * tile);
+
+              if (qr.isDark(row, col)) {
+                context.fillStyle = gradient;
+                // context.fillRect(x, y, w, h);
+                context.beginPath();
+                context.ellipse(x+w2,y+h2, w2, h2, 0, 0, Math.PI*2);
+                context.fill();
+              } else {
+                // context.fillStyle =  '#fff';
+                // context.fillRect(x, y, w, h);
+              }
             }
           }
         };
