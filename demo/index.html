@@ -203,11 +203,16 @@
       <span>{{correctionLevel}}</span>
     </p>
     <p>
-      <input type="radio" ng-model="correctionLevel" value=""/>  Auto (M)
-      <input type="radio" ng-model="correctionLevel" value="L"/>  L (Low)
-      <input type="radio" ng-model="correctionLevel" value="M"/>  M (Medium)
-      <input type="radio" ng-model="correctionLevel" value="Q"/>  Q (Quartile)
-      <input type="radio" ng-model="correctionLevel" value="H"/>  H (High)
+      <input type="radio" ng-model="correctionLevel" id="corrLevelA" value=""/>
+      <label for="corrLevelA">Auto (M)</label>
+      <input type="radio" ng-model="correctionLevel" id="corrLevelL" value="L"/>
+      <label for="corrLevelL">L (Low)</label>
+      <input type="radio" ng-model="correctionLevel" id="corrLevelM" value="M"/>
+      <label for="corrLevelM">M (Medium)</label>
+      <input type="radio" ng-model="correctionLevel" id="corrLevelQ" value="Q"/>
+      <label for="corrLevelQ">Q (Quartile)</label>
+      <input type="radio" ng-model="correctionLevel" id="corrLevelH" value="H"/>
+      <label for="corrLevelH">H (High)</label>
     </p>
 
 
@@ -224,10 +229,14 @@
       <span>{{inputMode}}</span>
     </p>
     <p>
-      <input type="radio" ng-model="inputMode" value=""/>  Auto
-      <input type="radio" ng-model="inputMode" value="NUMBER"/>  NUMBER
-      <input type="radio" ng-model="inputMode" value="ALPHA_NUM"/>  ALPHA_NUM
-      <input type="radio" ng-model="inputMode" value="8bit"/>  8bit
+      <input type="radio" ng-model="inputMode" id="inputModeAu" value=""/>
+      <label for="inputModeAu">Auto</label>
+      <input type="radio" ng-model="inputMode" id="inputModeNu" value="NUMBER"/>
+      <label for="inputModeNu">NUMBER</label>
+      <input type="radio" ng-model="inputMode" id="inputModeAN" value="ALPHA_NUM"/>
+      <label for="inputModeAN">ALPHA_NUM</label>
+      <input type="radio" ng-model="inputMode" id="inputMode8B" value="8bit"/>
+      <label for="inputMode8B">8bit</label>
     </p>
 
     <p>
