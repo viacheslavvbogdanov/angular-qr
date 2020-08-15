@@ -158,6 +158,9 @@
           circle: function(c, x, y, w) {
             drawCircle(c, x, y, w, w/2);
           },
+          circleBig: function(c, x, y, w) {
+            drawCircle(c, x, y, w, w*0.55);
+          },
           circleSmall: function(c, x, y, w) {
             drawCircle(c, x, y, w, w*0.4);
           },
@@ -174,26 +177,69 @@
             var r = w/2;
             drawStar(c, x+r, y+r, 5, r, r/2);
           },
+          star4: function(c, x, y, w) {
+            var r = w/2;
+            drawStar(c, x+r, y+r, 4, r, r/3);
+          },
+          star6: function(c, x, y, w) {
+            var r = w/2;
+            drawStar(c, x+r, y+r, 6, r, r/2);
+          },
+          snowflake: function(c, x, y, w) {
+            var r = w/2;
+            drawStar(c, x+r, y+r, 6, r, r/5);
+          },
+          star8: function(c, x, y, w) {
+            var r = w/2;
+            drawStar(c, x+r, y+r, 8, r*1.2, r/3);
+          }
+        };
+
+        var gradientFunc = {
+          diagonal:     function(c,w) {  return c.createLinearGradient(0,0, w, w);  },
+          diagonalLeft: function(c,w) {  return c.createLinearGradient(w,0, 0, w);  },
+          horizontal:   function(c,w) {  return c.createLinearGradient(0,0, w, 0);  },
+          vertical:     function(c,w) {  return c.createLinearGradient(0,0, 0, w);  },
+          radial:       function(c,w) {
+            var r=w/2;
+            return c.createRadialGradient(r,r, r, r, r,0);
+          },
+          radialInverse:function(c,w) {
+            var r=w/2;
+            return c.createRadialGradient(r,r, 0, r, r,r);
+          }
         };
 
         var draw = function(context, qr, modules, tile){
           var design = {
-            bodyShape:'star',
-            gradient:'diagonal', // diagonalLeft, horizontal, vertical
-            color:'#f00',
+            bodyShape:'circle',
+            gradient:'radialInverse', // diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
+            //MAYBE Fill pattern https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
+            color:      '#f00',
             colorMiddle:'#00f',
-            colorEnd:'#0a0'
+            colorFinish:'#0a0'
+            //TODO Eye Frame Shape, color
+            //TODO Eye Ball Shape, color
+            //TODO Logo image
+            //TODO Border
           };
 
-          var width  = modules*tile,
-              height = modules*tile;
+          var width  = modules*tile;
 
-          var gradient = context.createLinearGradient(0,0, width, height);
-          gradient.addColorStop(0, design.color);
-          gradient.addColorStop(0.5, '#00f');
-          gradient.addColorStop(1, '#0a0');
+          var isEye = function(row,col) {
 
-          var drawShape = drawShapeFunc[design.bodyShape];
+          };
+
+          // fill style & gradient
+          var bodyFillStyle = design.color || '#000';
+          if (design.gradient) {
+            bodyFillStyle = gradientFunc[design.gradient](context, width);
+            bodyFillStyle.addColorStop(0, design.color || '#000');
+            if (design.colorMiddle) bodyFillStyle.addColorStop(0.5, design.colorMiddle);
+            if (design.colorFinish) bodyFillStyle.addColorStop(1.0, design.colorFinish);
+          }
+
+          var bodyDrawShape = drawShapeFunc[design.bodyShape];
 
           for (var row = 0; row < modules; row++) {
             for (var col = 0; col < modules; col++) {
@@ -203,8 +249,8 @@
                   h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
 
               if (qr.isDark(row, col)) {
-                context.fillStyle = gradient;
-                drawShape(context, x, y, w);
+                context.fillStyle = bodyFillStyle;
+                bodyDrawShape(context, x, y, w);
               } else {
                 // context.fillStyle =  '#fff';
                 // context.fillRect(x, y, w, h);
