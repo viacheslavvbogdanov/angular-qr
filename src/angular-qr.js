@@ -105,30 +105,106 @@
         scope.INPUT_MODE = scope.getInputMode(scope.TEXT);
         scope.canvasImage = '';
 
+        var drawShiftedSquare = function(c, x, y, w, d) {
+          c.beginPath();
+          c.moveTo(x+d,y);
+          c.lineTo(x+w,y+d);
+          c.lineTo(x+w-d,y+w);
+          c.lineTo(x,y+w-d);
+          c.lineTo(x+d,y);
+          c.fill();
+        };
+
+        var drawCircle = function(c, x, y, w, r) {
+          var w2 = w/2;
+          c.beginPath();
+          c.ellipse(x+w2,y+w2, r, r, 0, 0, Math.PI*2);
+          c.fill();
+        };
+
+        var drawStar = function (c, cx, cy, spikes, outerRadius, innerRadius){
+          var rot=Math.PI/2*3;
+          var x=cx;
+          var y=cy;
+          var step=Math.PI/spikes;
+
+          c.beginPath();
+          c.moveTo(cx,cy-outerRadius);
+          for(var i=0; i<spikes; i++){
+            x=cx+Math.cos(rot)*outerRadius;
+            y=cy+Math.sin(rot)*outerRadius;
+            c.lineTo(x,y);
+            rot+=step;
+
+            x=cx+Math.cos(rot)*innerRadius;
+            y=cy+Math.sin(rot)*innerRadius;
+            c.lineTo(x,y);
+            rot+=step;
+          }
+          c.lineTo(cx,cy-outerRadius);
+          c.closePath();
+          // c.stroke();
+          c.fill();
+        };
+
+        var drawShapeFunc = {
+          square: function(c, x, y, w) {
+            c.fillRect(x, y, w, w);
+          },
+          squareSmall: function(c, x, y, w) {
+            var d = w*0.1, d2 = d*2;
+            c.fillRect(x+d, y+d, w-d2, w-d2);
+          },
+          circle: function(c, x, y, w) {
+            drawCircle(c, x, y, w, w/2);
+          },
+          circleSmall: function(c, x, y, w) {
+            drawCircle(c, x, y, w, w*0.4);
+          },
+          dot: function(c, x, y, w) {
+            drawCircle(c, x, y, w, w*0.3);
+          },
+          diamond: function(c, x, y, w) {
+            drawShiftedSquare(c, x, y, w, w/2);
+          },
+          mosaic: function(c, x, y, w) {
+            drawShiftedSquare(c, x, y, w, Math.random()*w/2);
+          },
+          star: function(c, x, y, w) {
+            var r = w/2;
+            drawStar(c, x+r, y+r, 5, r, r/2);
+          },
+        };
+
         var draw = function(context, qr, modules, tile){
+          var design = {
+            bodyShape:'star',
+            gradient:'diagonal', // diagonalLeft, horizontal, vertical
+            color:'#f00',
+            colorMiddle:'#00f',
+            colorEnd:'#0a0'
+          };
+
           var width  = modules*tile,
               height = modules*tile;
 
           var gradient = context.createLinearGradient(0,0, width, height);
-          gradient.addColorStop(0, '#f00');
+          gradient.addColorStop(0, design.color);
           gradient.addColorStop(0.5, '#00f');
-          gradient.addColorStop(1, '#0f0');
+          gradient.addColorStop(1, '#0a0');
+
+          var drawShape = drawShapeFunc[design.bodyShape];
 
           for (var row = 0; row < modules; row++) {
             for (var col = 0; col < modules; col++) {
-              var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
-                  h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
-              var w2 = w/2,
-                  h2 = h/2;
               var x = Math.round(col * tile),
                   y = Math.round(row * tile);
+              var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
+                  h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
 
               if (qr.isDark(row, col)) {
                 context.fillStyle = gradient;
-                // context.fillRect(x, y, w, h);
-                context.beginPath();
-                context.ellipse(x+w2,y+h2, w2, h2, 0, 0, Math.PI*2);
-                context.fill();
+                drawShape(context, x, y, w);
               } else {
                 // context.fillStyle =  '#fff';
                 // context.fillRect(x, y, w, h);
