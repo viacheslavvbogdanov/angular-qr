@@ -105,20 +105,20 @@
         scope.INPUT_MODE = scope.getInputMode(scope.TEXT);
         scope.canvasImage = '';
 
-        var drawShiftedSquare = function(c, x, y, w, d) {
+        var drawShiftedSquare = function(c, x, y, w, h, d) {
           c.beginPath();
           c.moveTo(x+d,y);
           c.lineTo(x+w,y+d);
-          c.lineTo(x+w-d,y+w);
-          c.lineTo(x,y+w-d);
+          c.lineTo(x+w-d,y+h);
+          c.lineTo(x,y+h-d);
           c.lineTo(x+d,y);
           c.fill();
         };
 
-        var drawCircle = function(c, x, y, w, r) {
-          var w2 = w/2;
+        var drawCircle = function(c, x, y, w, h, r) {
+          var w2 = w/2, h2 = h/2;
           c.beginPath();
-          c.ellipse(x+w2,y+w2, r, r, 0, 0, Math.PI*2);
+          c.ellipse(x+w2,y+h2, r, r, 0, 0, Math.PI*2);
           c.fill();
         };
 
@@ -148,30 +148,31 @@
         };
 
         var drawShapeFunc = {
-          square: function(c, x, y, w) {
-            c.fillRect(x, y, w, w);
+          square: function(c, x, y, w, h) {
+            c.fillRect(x, y, w, h);
           },
-          squareSmall: function(c, x, y, w) {
-            var d = w*0.1, d2 = d*2;
-            c.fillRect(x+d, y+d, w-d2, w-d2);
+          squareSmall: function(c, x, y, w, h) {
+            var dx = w*0.1, dx2 = dx*2;
+            var dy = h*0.1, dy2 = dy*2;
+            c.fillRect(x+dx, y+dy, w-dx2, h-dy2);
           },
-          circle: function(c, x, y, w) {
-            drawCircle(c, x, y, w, w/2);
+          circle: function(c, x, y, w, h) {
+            drawCircle(c, x, y, w, h,w/2);
           },
-          circleBig: function(c, x, y, w) {
-            drawCircle(c, x, y, w, w*0.55);
+          circleBig: function(c, x, y, w, h) {
+            drawCircle(c, x, y, w, h,w*0.55);
           },
-          circleSmall: function(c, x, y, w) {
-            drawCircle(c, x, y, w, w*0.4);
+          circleSmall: function(c, x, y, w, h) {
+            drawCircle(c, x, y, w, h, w*0.4);
           },
-          dot: function(c, x, y, w) {
-            drawCircle(c, x, y, w, w*0.3);
+          dot: function(c, x, y, w, h) {
+            drawCircle(c, x, y, w, h, w*0.3);
           },
-          diamond: function(c, x, y, w) {
-            drawShiftedSquare(c, x, y, w, w/2);
+          diamond: function(c, x, y, w, h) {
+            drawShiftedSquare(c, x, y, w, h, w/2);
           },
-          mosaic: function(c, x, y, w) {
-            drawShiftedSquare(c, x, y, w, Math.random()*w/2);
+          mosaic: function(c, x, y, w, h) {
+            drawShiftedSquare(c, x, y, w, h, Math.random()*w/2);
           },
           star: function(c, x, y, w) {
             var r = w/2;
@@ -212,25 +213,32 @@
 
         var draw = function(context, qr, modules, tile){
           var design = {
-            bodyShape:'circle',
+            bodyShape:'star', // square, squareSmall, circle, circleBig, circleSmall, dot, diamond, mosaic,
+                                // star, star4, star6, snowflake, star8
             gradient:'radialInverse', // diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
             //MAYBE Fill pattern https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
-            color:      '#f00',
-            colorMiddle:'#00f',
-            colorFinish:'#0a0'
+            color:      '#E6CA40',
+            colorMiddle:'#E6CA40',
+            colorFinish:'#351143',
+            // eyeShape:   'square',
+            eyeColor:   '#858A8F',
             //TODO Eye Frame Shape, color
             //TODO Eye Ball Shape, color
             //TODO Logo image
+            logoImageElementId: 'logoImage',
+            logoImageScale: 0.5,
+            removeBackgroundBehindLogo: true //TODO
             //TODO Border
           };
 
           var width  = modules*tile;
 
-          var isEye = function(row,col) {
-
+          var isEye = function(row, col) {
+            return (row<7 && col<7) || (row<7 && (modules-col<=7)) || ((modules-row<=7) && col<7);
           };
 
           // fill style & gradient
+          var eyeFillStyle = design.eyeColor;
           var bodyFillStyle = design.color || '#000';
           if (design.gradient) {
             bodyFillStyle = gradientFunc[design.gradient](context, width);
@@ -239,7 +247,8 @@
             if (design.colorFinish) bodyFillStyle.addColorStop(1.0, design.colorFinish);
           }
 
-          var bodyDrawShape = drawShapeFunc[design.bodyShape];
+          var bodyDrawShape = drawShapeFunc[design.bodyShape|| 'square'];
+          var eyeDrawShape  = drawShapeFunc[design.eyeShape || 'square'];
 
           for (var row = 0; row < modules; row++) {
             for (var col = 0; col < modules; col++) {
@@ -249,13 +258,29 @@
                   h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
 
               if (qr.isDark(row, col)) {
-                context.fillStyle = bodyFillStyle;
-                bodyDrawShape(context, x, y, w);
+                if (isEye(row, col, modules)) {
+                  context.fillStyle = eyeFillStyle;
+                  eyeDrawShape(context, x, y, w, h);
+                } else {
+                  context.fillStyle = bodyFillStyle;
+                  bodyDrawShape(context, x, y, w, h);
+                }
               } else {
                 // context.fillStyle =  '#fff';
                 // context.fillRect(x, y, w, h);
               }
             }
+          } // for
+
+          // logo image
+          var image = document.getElementById(design.logoImageElementId);
+          if (image) {
+            var aspect = image.naturalHeight / image.naturalWidth;
+            var dWidth = width * design.logoImageScale;
+            var dHeight = dWidth * aspect;
+            var dx = (width - dWidth) / 2;
+            var dy = (width - dHeight) / 2;
+            context.drawImage(image, dx, dy, dWidth, dHeight);
           }
         };
 

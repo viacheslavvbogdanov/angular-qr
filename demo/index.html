@@ -129,6 +129,7 @@
   <div ng-controller="AdaptiveCtrl">
 
   <header>
+    <img id="logoImage" src="logo_image.png" width="256">
     <h1 class="text-center title">angular-qr-donkey</h1>
     <p class="text-center title"><i>QR code generator for AngularJS.</i></p>
 
@@ -265,7 +266,7 @@
 angular.module('adaptiveApp', ['ja.qr']).
 
 controller('AdaptiveCtrl', function ($scope) {
-  $scope.qrcodeString = 'YOUR TEXT TO ENCODE';
+  $scope.qrcodeString = 'QR DONKEY - FRIEND OF QR MONKEY';
   $scope.size = 400;
   $scope.correctionLevel = 'H';
   $scope.typeNumber = 0;
