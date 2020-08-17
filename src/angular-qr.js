@@ -118,7 +118,7 @@
         var drawCircle = function(c, x, y, w, h, r) {
           var w2 = w/2, h2 = h/2;
           c.beginPath();
-          c.ellipse(x+w2,y+h2, r, r, 0, 0, Math.PI*2);
+          c.ellipse(x+w2,y+h2, w*r, h*r, 0, 0, Math.PI*2);
           c.fill();
         };
 
@@ -147,6 +147,62 @@
           c.fill();
         };
 
+        var drawLinkedHorizontally = function(c, x, y, w, h, qr, row, col, linkSize, shape) {
+          var r = h*linkSize, w2 = w/2, p = h/2- r;
+          var lDark = qr.isDark(row,col-1),
+              rDark = qr.isDark(row,col+1);
+          var drawShape = drawShapeFunc[shape] || drawShapeFunc.circle;
+
+          if ((!lDark||!rDark)) drawShape(c, x, y, w, h);
+
+          if (lDark&&rDark) c.fillRect(x, y+p, w, r*2);
+          else {
+            if (lDark) c.fillRect(x, y + p, w2, r * 2);
+            if (rDark) c.fillRect(x + w2, y + p, w2, r * 2);
+          }
+        };
+
+        var drawLinkedVertically = function(c, x, y, w, h, qr, row, col, linkSize, shape) {
+          var r = w*linkSize, h2 = h/2, p = w/2-r;
+          var uDark = qr.isDark(row-1,col),
+              dDark = qr.isDark(row+1,col);
+          var drawShape = drawShapeFunc[shape] || drawShapeFunc.circle;
+
+          if ((!uDark||!dDark)) drawShape(c, x, y, w, h);
+
+          if (uDark&&dDark) c.fillRect(x+p, y, r*2, h);
+          else {
+            if (uDark) c.fillRect(x+p, y, r*2, h2);
+            if (dDark) c.fillRect(x+p, y+h2, r*2, h2);
+          }
+        };
+
+        var getNear = function(qr, row, col) {
+          return {
+            l: qr.isDark(row,col-1),
+            r: qr.isDark(row,col+1),
+            u: qr.isDark(row-1,col),
+            d: qr.isDark(row+1,col)
+          };
+        };
+        
+        var drawLinked = function(c, x, y, w, h, qr, row, col, linkSize, shape) {
+          var r = h/2, w2 = w/2, h2 = h/2;
+          var near = getNear(qr, row, col);
+          var drawShape = drawShapeFunc[shape] || drawShapeFunc.circle;
+
+          if ((!near.l||!near.r||!near.u||!near.d))
+            drawShape(c, x, y, w, h);
+
+          if (near.l&&near.r&&near.u&&near.d) c.fillRect(x, y, w, h);
+          else {
+            if (near.l) c.fillRect(x, y, w2, h);
+            if (near.r) c.fillRect(x + w2, y , w2, h);
+            if (near.u) c.fillRect(x, y, w, h2);
+            if (near.d) c.fillRect(x, y+h2, w, h2);
+          }
+        };
+
         var drawShapeFunc = {
           square: function(c, x, y, w, h) {
             c.fillRect(x, y, w, h);
@@ -157,16 +213,16 @@
             c.fillRect(x+dx, y+dy, w-dx2, h-dy2);
           },
           circle: function(c, x, y, w, h) {
-            drawCircle(c, x, y, w, h,w/2);
+            drawCircle(c, x, y, w, h,0.5);
           },
           circleBig: function(c, x, y, w, h) {
-            drawCircle(c, x, y, w, h,w*0.55);
+            drawCircle(c, x, y, w, h,0.55);
           },
           circleSmall: function(c, x, y, w, h) {
-            drawCircle(c, x, y, w, h, w*0.4);
+            drawCircle(c, x, y, w, h, 0.4);
           },
           dot: function(c, x, y, w, h) {
-            drawCircle(c, x, y, w, h, w*0.3);
+            drawCircle(c, x, y, w, h, 0.3);
           },
           diamond: function(c, x, y, w, h) {
             drawShiftedSquare(c, x, y, w, h, w/2);
@@ -193,7 +249,42 @@
           star8: function(c, x, y, w) {
             var r = w/2;
             drawStar(c, x+r, y+r, 8, r*1.2, r/3);
-          }
+          },
+
+          // connected shapes
+          zebra: function(c, x, y, w, h, qr, row, col) {
+            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.4, 'circleSmall');
+          },
+          zebraVertical: function(c, x, y, w, h, qr, row, col) {
+            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.4, 'circleSmall');
+          },
+          zebraThin: function(c, x, y, w, h, qr, row, col) {
+            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.3, 'dot');
+          },
+          zebraThinVertical: function(c, x, y, w, h, qr, row, col) {
+            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.3, 'dot');
+          },
+          star6Vertical: function(c, x, y, w, h, qr, row, col) {
+            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.25, 'star8');
+          },
+          star6Horizontal: function(c, x, y, w, h, qr, row, col) {
+            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.25, 'star8');
+          },
+          pcbVertical: function(c, x, y, w, h, qr, row, col) {
+            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.25, 'circle');
+          },
+          pcbHorizontal: function(c, x, y, w, h, qr, row, col) {
+            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.25, 'circle');
+          },
+          circleLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 1, 'circle');
+          },
+          diamondLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 1, 'diamond');
+          },
+          linked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 1, 'mosaic');
+          },
         };
 
         var gradientFunc = {
@@ -213,15 +304,20 @@
 
         var draw = function(context, qr, modules, tile){
           var design = {
-            bodyShape:'star', // square, squareSmall, circle, circleBig, circleSmall, dot, diamond, mosaic,
-                                // star, star4, star6, snowflake, star8
-            gradient:'radialInverse', // diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
+            // bodyShape: square, squareSmall, circle, circleBig, circleSmall,
+            // dot, diamond, mosaic, star, star4, star6, snowflake, star8,
+            // zebra, zebraVertical
+            bodyShape:'linked',
+
+            // Gradient: diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
+            gradient:'radialInverse',
             //MAYBE Fill pattern https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
             color:      '#E6CA40',
             colorMiddle:'#E6CA40',
             colorFinish:'#351143',
-            // eyeShape:   'square',
+            // Eyes
             eyeColor:   '#858A8F',
+            // eyeShape:   'square',
             //TODO Eye Frame Shape, color
             //TODO Eye Ball Shape, color
             //TODO Logo image
@@ -229,6 +325,7 @@
             logoImageScale: 0.5,
             removeBackgroundBehindLogo: true //TODO
             //TODO Border
+            //TODO BG color
           };
 
           var width  = modules*tile;
@@ -247,8 +344,8 @@
             if (design.colorFinish) bodyFillStyle.addColorStop(1.0, design.colorFinish);
           }
 
-          var bodyDrawShape = drawShapeFunc[design.bodyShape|| 'square'];
-          var eyeDrawShape  = drawShapeFunc[design.eyeShape || 'square'];
+          var bodyDrawShape = drawShapeFunc[design.bodyShape] || drawShapeFunc.square;
+          var eyeDrawShape  = drawShapeFunc[design.eyeShape ] || drawShapeFunc.square;
 
           for (var row = 0; row < modules; row++) {
             for (var col = 0; col < modules; col++) {
@@ -260,10 +357,10 @@
               if (qr.isDark(row, col)) {
                 if (isEye(row, col, modules)) {
                   context.fillStyle = eyeFillStyle;
-                  eyeDrawShape(context, x, y, w, h);
+                  eyeDrawShape(context, x, y, w, h, qr, row, col);
                 } else {
                   context.fillStyle = bodyFillStyle;
-                  bodyDrawShape(context, x, y, w, h);
+                  bodyDrawShape(context, x, y, w, h, qr, row, col);
                 }
               } else {
                 // context.fillStyle =  '#fff';
@@ -272,7 +369,7 @@
             }
           } // for
 
-          // logo image
+          // Logo Image
           var image = document.getElementById(design.logoImageElementId);
           if (image) {
             var aspect = image.naturalHeight / image.naturalWidth;
