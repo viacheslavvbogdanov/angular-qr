@@ -175,7 +175,7 @@
     </p>
 
     <p>
-      <qr text="qrcodeString" type-number="typeNumber" correction-level="correctionLevel" size="size" input-mode="inputMode" image="image"></qr>
+      <qr text="qrcodeString" ng-click="refreshOnClick()" type-number="typeNumber" correction-level="correctionLevel" size="size" input-mode="inputMode" image="image"></qr>
     </p>
 
     <p>
@@ -266,12 +266,16 @@
 angular.module('adaptiveApp', ['ja.qr']).
 
 controller('AdaptiveCtrl', function ($scope) {
-  $scope.qrcodeString = 'QR DONKEY - FRIEND OF QR MONKEY';
+  $scope.qrcodeString = 'QR DONKEY - THE BEST';
   $scope.size = 400;
   $scope.correctionLevel = 'H';
   $scope.typeNumber = 0;
   $scope.inputMode = '';
   $scope.image = true;
+  $scope.refreshOnClick = function() {
+    var str = $scope.qrcodeString;
+    $scope.qrcodeString = $scope.qrcodeString+'!';
+  }
 });
 </script>
 </body>

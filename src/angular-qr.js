@@ -187,20 +187,22 @@
         };
         
         var drawLinked = function(c, x, y, w, h, qr, row, col, linkSize, shape) {
-          var w2 = w/2, h2 = h/2, rw = w*linkSize, rh = h*linkSize;
+          var w2 = w/2, h2 = h/2, rw = w*linkSize, rh = h*linkSize, pw = w2 - rw/2, ph = h2 - rh/2;
           var near = lookAround(qr, row, col);
           var drawShape = drawShapeFunc[shape] || drawShapeFunc.circle;
 
-          if ((!near.l||!near.r||!near.u||!near.d))
+          var connections = Number(near.l)+Number(near.r)+Number(near.u)+Number(near.d);
+
+          if (connections<2 || !(connections>=2 && ((near.l&&near.r)||(near.u&&near.d)) ))
             drawShape(c, x, y, w, h);
 
           // if (near.l&&near.r&&near.u&&near.d) c.fillRect(x, y, w, h);
           // else
           //   {
-            if (near.l) c.fillRect(x, y, w2, h);
-            if (near.r) c.fillRect(x + w2, y , w2, h);
-            if (near.u) c.fillRect(x, y, w, h2);
-            if (near.d) c.fillRect(x, y+h2, w, h2);
+            if (near.l) c.fillRect(x, y+ph, w2, rh);
+            if (near.r) c.fillRect(x + w2, y+ph , w2, rh);
+            if (near.u) c.fillRect(x+pw, y, rw, h2);
+            if (near.d) c.fillRect(x+pw, y+h2, rw, h2);
           // }
         };
 
@@ -284,7 +286,7 @@
             drawLinked(c, x, y, w, h, qr, row, col, 1, 'diamond');
           },
           linked: function(c, x, y, w, h, qr, row, col) {
-            drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'diamond');
+            drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'circle');
           }
         };
 
