@@ -148,59 +148,60 @@
         };
 
         var drawLinkedHorizontally = function(c, x, y, w, h, qr, row, col, linkSize, shape) {
-          var r = h*linkSize, w2 = w/2, p = h/2- r;
+          var r = h*linkSize, w2 = w/2, p = h/2 - r/2;
           var lDark = qr.isDark(row,col-1),
               rDark = qr.isDark(row,col+1);
           var drawShape = drawShapeFunc[shape] || drawShapeFunc.circle;
 
           if ((!lDark||!rDark)) drawShape(c, x, y, w, h);
 
-          if (lDark&&rDark) c.fillRect(x, y+p, w, r*2);
+          if (lDark&&rDark) c.fillRect(x, y+p, w, r);
           else {
-            if (lDark) c.fillRect(x, y + p, w2, r * 2);
-            if (rDark) c.fillRect(x + w2, y + p, w2, r * 2);
+            if (lDark) c.fillRect(x, y + p, w2, r);
+            if (rDark) c.fillRect(x + w2, y + p, w2, r);
           }
         };
 
         var drawLinkedVertically = function(c, x, y, w, h, qr, row, col, linkSize, shape) {
-          var r = w*linkSize, h2 = h/2, p = w/2-r;
+          var r = w*linkSize, h2 = h/2, p = w/2 - r/2;
           var uDark = qr.isDark(row-1,col),
               dDark = qr.isDark(row+1,col);
           var drawShape = drawShapeFunc[shape] || drawShapeFunc.circle;
 
           if ((!uDark||!dDark)) drawShape(c, x, y, w, h);
 
-          if (uDark&&dDark) c.fillRect(x+p, y, r*2, h);
+          if (uDark&&dDark) c.fillRect(x+p, y, r, h);
           else {
-            if (uDark) c.fillRect(x+p, y, r*2, h2);
-            if (dDark) c.fillRect(x+p, y+h2, r*2, h2);
+            if (uDark) c.fillRect(x+p, y, r, h2);
+            if (dDark) c.fillRect(x+p, y+h2, r, h2);
           }
         };
 
-        var getNear = function(qr, row, col) {
+        var lookAround = function(qr, row, col) {
           return {
-            l: qr.isDark(row,col-1),
-            r: qr.isDark(row,col+1),
-            u: qr.isDark(row-1,col),
-            d: qr.isDark(row+1,col)
+            l: qr.isDark(row,col-1), // left
+            r: qr.isDark(row,col+1), // right
+            u: qr.isDark(row-1,col), // up
+            d: qr.isDark(row+1,col)  // down
           };
         };
         
         var drawLinked = function(c, x, y, w, h, qr, row, col, linkSize, shape) {
-          var r = h/2, w2 = w/2, h2 = h/2;
-          var near = getNear(qr, row, col);
+          var w2 = w/2, h2 = h/2, rw = w*linkSize, rh = h*linkSize;
+          var near = lookAround(qr, row, col);
           var drawShape = drawShapeFunc[shape] || drawShapeFunc.circle;
 
           if ((!near.l||!near.r||!near.u||!near.d))
             drawShape(c, x, y, w, h);
 
-          if (near.l&&near.r&&near.u&&near.d) c.fillRect(x, y, w, h);
-          else {
+          // if (near.l&&near.r&&near.u&&near.d) c.fillRect(x, y, w, h);
+          // else
+          //   {
             if (near.l) c.fillRect(x, y, w2, h);
             if (near.r) c.fillRect(x + w2, y , w2, h);
             if (near.u) c.fillRect(x, y, w, h2);
             if (near.d) c.fillRect(x, y+h2, w, h2);
-          }
+          // }
         };
 
         var drawShapeFunc = {
@@ -253,28 +254,28 @@
 
           // connected shapes
           zebra: function(c, x, y, w, h, qr, row, col) {
-            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.4, 'circleSmall');
+            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.8, 'circleSmall');
           },
           zebraVertical: function(c, x, y, w, h, qr, row, col) {
-            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.4, 'circleSmall');
+            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.8, 'circleSmall');
           },
           zebraThin: function(c, x, y, w, h, qr, row, col) {
-            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.3, 'dot');
+            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.6, 'dot');
           },
           zebraThinVertical: function(c, x, y, w, h, qr, row, col) {
-            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.3, 'dot');
+            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.6, 'dot');
           },
           star6Vertical: function(c, x, y, w, h, qr, row, col) {
-            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.25, 'star8');
+            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.5, 'star8');
           },
           star6Horizontal: function(c, x, y, w, h, qr, row, col) {
-            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.25, 'star8');
+            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.5, 'star8');
           },
           pcbVertical: function(c, x, y, w, h, qr, row, col) {
-            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.25, 'circle');
+            drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.5, 'circle');
           },
           pcbHorizontal: function(c, x, y, w, h, qr, row, col) {
-            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.25, 'circle');
+            drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.5, 'circle');
           },
           circleLinked: function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 1, 'circle');
@@ -283,8 +284,8 @@
             drawLinked(c, x, y, w, h, qr, row, col, 1, 'diamond');
           },
           linked: function(c, x, y, w, h, qr, row, col) {
-            drawLinked(c, x, y, w, h, qr, row, col, 1, 'mosaic');
-          },
+            drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'diamond');
+          }
         };
 
         var gradientFunc = {
