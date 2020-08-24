@@ -335,8 +335,23 @@
           }
         };
 
-        var drawEyeFrameShapeFunc = {
-
+        var drawEyeFrameFunc = {
+          square: function(c,w,e,t,d,s,r) {
+            c.strokeRect(d,d,s,s);
+            c.strokeRect(e,d,s,s);
+            c.strokeRect(d,e,s,s);
+          },
+          circle: function(c,w,e,t,d,s,r) {
+            c.beginPath();
+            c.ellipse(r, r, r-d, r-d, 0, 0, 2 * Math.PI);
+            c.stroke();
+            c.beginPath();
+            c.ellipse(w-r, r, r-d, r-d, 0, 0, 2 * Math.PI);
+            c.stroke();
+            c.beginPath();
+            c.ellipse(r, w-r, r-d, r-d, 0, 0, 2 * Math.PI);
+            c.stroke();
+          },
         };
 
         var draw = function(context, qr, modules, tile){
@@ -345,7 +360,6 @@
             // dot, diamond, mosaic, star, star4, star6, snowflake, star8,
             // zebra, zebraVertical
             bodyShape:'pcbThinLinked',
-
             // Gradient: diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
             gradient:'radialInverse',
             //MAYBE Fill pattern https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
@@ -354,12 +368,11 @@
             colorFinish:'#351143',
             // Eyes
             eyeColor:     '#858A8F',
+            eyeFrameShape: 'circle',
             eyeFrameColor:'#17980C',
             eyeBallColor: '#BE1919',
             // eyeShape:   'square',
-            //TODO Eye Frame Shape, color
-            //TODO Eye Ball Shape, color
-            //TODO Logo image
+            //Logo image
             logoImageElementId: 'logoImage',
             logoImageScale: 0.5,
             removeBackgroundBehindLogo: true //TODO
@@ -407,6 +420,13 @@
               }
             }
           } // for
+
+          // Eyes Frames
+          var eyeFrameShape  = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
+          context.strokeStyle = design.eyeFrameColor;
+          context.lineWidth = tile;
+          var delta = tile/2, side=tile*7, end=width-side-delta, radius=side/2;
+          eyeFrameShape(context, width, end, tile, delta, side, radius);
 
           // Logo Image
           var image = document.getElementById(design.logoImageElementId);
