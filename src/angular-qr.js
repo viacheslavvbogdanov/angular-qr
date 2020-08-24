@@ -356,6 +356,27 @@
           },
         };
 
+        var drawEyeBallFunc = {
+          square: function(c,w,t,s,r) {
+            var e=w-r, s2=s/2, rs2=r-s2, es2=e-s2;
+            c.fillRect(rs2,rs2,s,s);
+            c.fillRect(es2,rs2,s,s);
+            c.fillRect(rs2,es2,s,s);
+          },
+          circle: function(c,w,t,s,r) {
+            var s2=s/2, wr=w-r;
+            c.beginPath();
+            c.ellipse(r, r, s2, s2, 0, 0, 2 * Math.PI);
+            c.fill();
+            c.beginPath();
+            c.ellipse(wr, r, s2, s2, 0, 0, 2 * Math.PI);
+            c.fill();
+            c.beginPath();
+            c.ellipse(r, wr, s2, s2, 0, 0, 2 * Math.PI);
+            c.fill();
+          },
+        };
+
         var draw = function(context, qr, modules, tile){
           var design = {
             // bodyShape: square, squareSmall, circle, circleBig, circleSmall,
@@ -369,11 +390,12 @@
             colorMiddle:'#E6CA40',
             colorFinish:'#351143',
             // Eyes
-            eyeColor:     '#858A8F',
-            eyeFrameShape: 'circle',
-            eyeFrameColor:'#17980C',
-            eyeBallColor: '#BE1919',
             // eyeShape:   'square',
+            // eyeColor:     '#858A8F',
+            eyeFrameShape:'circle',
+            eyeFrameColor:'#858A8F',
+            eyeBallShape: 'circle',
+            eyeBallColor: '#2F0A43',
             //Logo image
             logoImageElementId: 'logoImage',
             logoImageScale: 0.5,
@@ -410,8 +432,10 @@
 
               if (qr.isDark(row, col)) {
                 if (isEye(row, col, modules)) {
-                  context.fillStyle = eyeFillStyle;
-                  eyeDrawShape(context, x, y, w, h, qr, row, col);
+                  if (design.eyeColor) {
+                    context.fillStyle = eyeFillStyle;
+                    eyeDrawShape(context, x, y, w, h, qr, row, col);
+                  }
                 } else {
                   context.fillStyle = bodyFillStyle;
                   bodyDrawShape(context, x, y, w, h, qr, row, col);
@@ -424,12 +448,21 @@
           } // for
 
           // Eyes Frames
-          var eyeFrameShape  = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
-          context.strokeStyle = design.eyeFrameColor;
-          context.lineWidth = tile;
-          var delta = tile/2, side=tile*7, radius=side/2;
-          eyeFrameShape(context, width, tile, delta, side, radius);
-
+          {
+            var eyeFrameShape = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
+            context.strokeStyle = design.eyeFrameColor;
+            context.lineWidth = tile;
+            var delta = tile / 2, side = tile * 7, radius = side / 2;
+            eyeFrameShape(context, width, tile, delta, side, radius);
+          }
+          // Eyes Balls
+          {
+            var eyeBallShape = drawEyeBallFunc[design.eyeBallShape] || drawEyeBallFunc.square;
+            context.fillStyle = design.eyeBallColor;
+            context.lineWidth = 1;
+            var ballSide = tile * 3, eyeRadius = tile * 7 / 2;
+            eyeBallShape(context, width, tile, ballSide, eyeRadius);
+          }
           // Logo Image
           var image = document.getElementById(design.logoImageElementId);
           if (image) {
