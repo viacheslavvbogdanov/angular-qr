@@ -336,20 +336,22 @@
         };
 
         var drawEyeFrameFunc = {
-          square: function(c,w,e,t,d,s,r) {
+          square: function(c,w,t,d,s,r) {
+            var e=w-s-d;
             c.strokeRect(d,d,s,s);
             c.strokeRect(e,d,s,s);
             c.strokeRect(d,e,s,s);
           },
-          circle: function(c,w,e,t,d,s,r) {
+          circle: function(c,w,t,d,s,r) {
+            var rd=r-d, wr=w-r;
             c.beginPath();
-            c.ellipse(r, r, r-d, r-d, 0, 0, 2 * Math.PI);
+            c.ellipse(r, r, rd, rd, 0, 0, 2 * Math.PI);
             c.stroke();
             c.beginPath();
-            c.ellipse(w-r, r, r-d, r-d, 0, 0, 2 * Math.PI);
+            c.ellipse(wr, r, rd, rd, 0, 0, 2 * Math.PI);
             c.stroke();
             c.beginPath();
-            c.ellipse(r, w-r, r-d, r-d, 0, 0, 2 * Math.PI);
+            c.ellipse(r, wr, rd, rd, 0, 0, 2 * Math.PI);
             c.stroke();
           },
         };
@@ -425,8 +427,8 @@
           var eyeFrameShape  = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
           context.strokeStyle = design.eyeFrameColor;
           context.lineWidth = tile;
-          var delta = tile/2, side=tile*7, end=width-side-delta, radius=side/2;
-          eyeFrameShape(context, width, end, tile, delta, side, radius);
+          var delta = tile/2, side=tile*7, radius=side/2;
+          eyeFrameShape(context, width, tile, delta, side, radius);
 
           // Logo Image
           var image = document.getElementById(design.logoImageElementId);
