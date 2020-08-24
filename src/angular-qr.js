@@ -196,14 +196,10 @@
           if (connections<2 || !(connections>=2 && ((near.l&&near.r)||(near.u&&near.d)) ))
             drawShape(c, x, y, w, h);
 
-          // if (near.l&&near.r&&near.u&&near.d) c.fillRect(x, y, w, h);
-          // else
-          //   {
-            if (near.l) c.fillRect(x, y+ph, w2, rh);
-            if (near.r) c.fillRect(x + w2, y+ph , w2, rh);
-            if (near.u) c.fillRect(x+pw, y, rw, h2);
-            if (near.d) c.fillRect(x+pw, y+h2, rw, h2);
-          // }
+          if (near.l) c.fillRect(x, y+ph, w2, rh);
+          if (near.r) c.fillRect(x + w2, y+ph , w2, rh);
+          if (near.u) c.fillRect(x+pw, y, rw, h2);
+          if (near.d) c.fillRect(x+pw, y+h2, rw, h2);
         };
 
         var drawShapeFunc = {
@@ -279,15 +275,49 @@
           pcbHorizontal: function(c, x, y, w, h, qr, row, col) {
             drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.5, 'circle');
           },
-          circleLinked: function(c, x, y, w, h, qr, row, col) {
+          circleWideLinked: function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 1, 'circle');
           },
-          diamondLinked: function(c, x, y, w, h, qr, row, col) {
+          diamondWideLinked: function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 1, 'diamond');
           },
-          linked: function(c, x, y, w, h, qr, row, col) {
+          pcbLinked: function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'circle');
-          }
+          },
+          mosaicLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'mosaic');
+          },
+          circleLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'circle');
+          },
+          diamondLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'diamond');
+          },
+          squareSmallLinked: function(c, x, y, w, h, qr, row, col) {
+              drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'squareSmall');
+          },
+          mosaicThinLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'mosaic');
+          },
+          circleThinLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'circle');
+          },
+          pcbThinLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'circleSmall');
+          },
+          diamondThinLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'diamond');
+          },
+          squareSmallThinLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'squareSmall');
+          },
+          star8ThinLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'star8');
+          },
+          star4ThinLinked: function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'star4');
+          },
+
         };
 
         var gradientFunc = {
@@ -305,12 +335,16 @@
           }
         };
 
+        var drawEyeFrameShapeFunc = {
+
+        };
+
         var draw = function(context, qr, modules, tile){
           var design = {
             // bodyShape: square, squareSmall, circle, circleBig, circleSmall,
             // dot, diamond, mosaic, star, star4, star6, snowflake, star8,
             // zebra, zebraVertical
-            bodyShape:'linked',
+            bodyShape:'pcbThinLinked',
 
             // Gradient: diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
             gradient:'radialInverse',
@@ -319,7 +353,9 @@
             colorMiddle:'#E6CA40',
             colorFinish:'#351143',
             // Eyes
-            eyeColor:   '#858A8F',
+            eyeColor:     '#858A8F',
+            eyeFrameColor:'#17980C',
+            eyeBallColor: '#BE1919',
             // eyeShape:   'square',
             //TODO Eye Frame Shape, color
             //TODO Eye Ball Shape, color
