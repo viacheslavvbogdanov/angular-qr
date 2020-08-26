@@ -335,6 +335,77 @@
           }
         };
 
+        var drawPetal = function(c,w,t,d,s,r) {
+          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+          c.beginPath();
+          c.moveTo(p,d);
+          c.lineTo(sd-d2,d);
+          c.lineTo(sd-d2,sd-d2);
+          c.lineTo(d,sd-d2);
+          c.lineTo(d,p);
+          c.quadraticCurveTo(d,d,p,d, 0, 0);
+          c.closePath();
+          c.stroke();
+        };
+        var drawLeaf = function(c,w,t,d,s,r) {
+          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+          c.beginPath();
+          c.moveTo(d, d);
+          c.lineTo(sd - p2, d);
+          c.quadraticCurveTo(sd - d2, d, sd - d2, p);
+          c.lineTo(sd - d2, sd - d2);
+          c.lineTo(p, sd - d2);
+          c.quadraticCurveTo(d, sd - d2, d, sd - p2);
+          c.lineTo(d, d);
+          c.closePath();
+          c.stroke();
+        };
+        var drawRound = function(c,w,t,d,s,r) {
+          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+          c.beginPath();
+          c.moveTo(p,d);
+          c.lineTo(sd-p2,d);
+          c.quadraticCurveTo( sd-d2, d, sd-d2,p);
+          c.lineTo(sd-d2,sd-p2);
+          c.quadraticCurveTo(sd-d2,sd-d2,sd-p2,sd-d2);
+          c.lineTo(p,sd-d2);
+          c.quadraticCurveTo(d,sd-d2,d,sd-p2);
+          c.lineTo(d,p);
+          c.quadraticCurveTo(d,d,p,d, 0, 0);
+          c.closePath();
+          c.stroke();
+        };
+        var drawOcta = function(c,w,t,d,s,r) {
+          var k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+          c.beginPath();
+          c.moveTo(p,d);
+          c.lineTo(sd-p2,d);
+          c.lineTo(sd-d2,p);
+          c.lineTo(sd-d2,sd-p2);
+          c.lineTo(sd-p2,sd-d2);
+          c.lineTo(p,sd-d2);
+          c.lineTo(d,sd-p2);
+          c.lineTo(d,p);
+          c.lineTo(p,d);
+          c.closePath();
+          c.stroke();
+        };
+
+
+        var drawAllEyes = function(draw,c,w,t,d,s,r) {
+          var stored = c.getTransform();
+          var tr = c.getTransform();
+          draw(c,w,t,d,s,r); // top left eye
+          c.rotate(Math.PI/2);
+          c.translate(0,-w);
+          draw(c,w,t,d,s,r); // top right eye
+          c.translate(0,w);
+          c.rotate(-Math.PI);
+          c.translate(-w,0);
+          draw(c,w,t,d,s,r); // bottom left eye
+          c.setTransform(stored);
+        };
+
         var drawEyeFrameFunc = {
           square: function(c,w,t,d,s,r) {
             var e=w-s-d;
@@ -355,63 +426,17 @@
             c.stroke();
           },
           octa: function(c,w,t,d,s,r) {
-            var k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
-            c.beginPath();
-            c.moveTo(p,d);
-            c.lineTo(sd-p2,d);
-            c.lineTo(sd-d2,p);
-            c.lineTo(sd-d2,sd-p2);
-            c.lineTo(sd-p2,sd-d2);
-            c.lineTo(p,sd-d2);
-            c.lineTo(d,sd-p2);
-            c.lineTo(d,p);
-            c.lineTo(p,d);
-            c.closePath();
-            c.stroke();
+            drawAllEyes(drawOcta,c,w,t,d,s,r);
           },
           round: function(c,w,t,d,s,r) {
-            var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
-            c.beginPath();
-            c.moveTo(p,d);
-            c.lineTo(sd-p2,d);
-            c.quadraticCurveTo( sd-d2, d, sd-d2,p);
-            c.lineTo(sd-d2,sd-p2);
-            c.quadraticCurveTo(sd-d2,sd-d2,sd-p2,sd-d2);
-            c.lineTo(p,sd-d2);
-            c.quadraticCurveTo(d,sd-d2,d,sd-p2);
-            c.lineTo(d,p);
-            c.quadraticCurveTo(d,d,p,d, 0, 0);
-            c.closePath();
-            c.stroke();
+            drawAllEyes(drawRound,c,w,t,d,s,r);
           },
           leaf: function(c,w,t,d,s,r) {
-            var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
-            var draw = function() {
-              c.beginPath();
-              c.moveTo(d, d);
-              c.lineTo(sd - p2, d);
-              c.quadraticCurveTo(sd - d2, d, sd - d2, p);
-              c.lineTo(sd - d2, sd - d2);
-              c.lineTo(p, sd - d2);
-              c.quadraticCurveTo(d, sd - d2, d, sd - p2);
-              c.lineTo(d, d);
-              c.closePath();
-              c.stroke();
-            }
-            var stored = c.getTransform();
-            var tr = c.getTransform();
-            draw();
-
-            tr.e = tr.e+w-s;
-            c.setTransform(tr);
-            draw();
-
-            tr.e = stored.e; tr.f = tr.f+w-s;
-            c.setTransform(tr);
-            draw();
-
-            c.setTransform(stored);
+            drawAllEyes(drawLeaf,c,w,t,d,s,r);
           },
+          petal: function(c,w,t,d,s,r) {
+            drawAllEyes(drawPetal,c,w,t,d,s,r);
+          }
         };
 
         var drawEyeBallFunc = {
@@ -449,9 +474,10 @@
             colorFinish:'#351143',
             // Eyes
             // eyeShape:   'square',
-            eyeColor:     'lightGray',
-            eyeFrameShape:'leaf',
-            eyeFrameColor: 'green',//'#858A8F',
+            // eyeColor:     'lightGray',
+            // square, circle, octa, round, leaf, petal,
+            eyeFrameShape: 'petal',
+            eyeFrameColor: 'red',//'#858A8F',
             eyeBallShape: 'circle',
             eyeBallColor: '#2F0A43',
             //Logo image
