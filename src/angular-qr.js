@@ -354,6 +354,64 @@
             c.ellipse(r, wr, rd, rd, 0, 0, 2 * Math.PI);
             c.stroke();
           },
+          octa: function(c,w,t,d,s,r) {
+            var k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+            c.beginPath();
+            c.moveTo(p,d);
+            c.lineTo(sd-p2,d);
+            c.lineTo(sd-d2,p);
+            c.lineTo(sd-d2,sd-p2);
+            c.lineTo(sd-p2,sd-d2);
+            c.lineTo(p,sd-d2);
+            c.lineTo(d,sd-p2);
+            c.lineTo(d,p);
+            c.lineTo(p,d);
+            c.closePath();
+            c.stroke();
+          },
+          round: function(c,w,t,d,s,r) {
+            var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+            c.beginPath();
+            c.moveTo(p,d);
+            c.lineTo(sd-p2,d);
+            c.quadraticCurveTo( sd-d2, d, sd-d2,p);
+            c.lineTo(sd-d2,sd-p2);
+            c.quadraticCurveTo(sd-d2,sd-d2,sd-p2,sd-d2);
+            c.lineTo(p,sd-d2);
+            c.quadraticCurveTo(d,sd-d2,d,sd-p2);
+            c.lineTo(d,p);
+            c.quadraticCurveTo(d,d,p,d, 0, 0);
+            c.closePath();
+            c.stroke();
+          },
+          leaf: function(c,w,t,d,s,r) {
+            var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+            var draw = function() {
+              c.beginPath();
+              c.moveTo(d, d);
+              c.lineTo(sd - p2, d);
+              c.quadraticCurveTo(sd - d2, d, sd - d2, p);
+              c.lineTo(sd - d2, sd - d2);
+              c.lineTo(p, sd - d2);
+              c.quadraticCurveTo(d, sd - d2, d, sd - p2);
+              c.lineTo(d, d);
+              c.closePath();
+              c.stroke();
+            }
+            var stored = c.getTransform();
+            var tr = c.getTransform();
+            draw();
+
+            tr.e = tr.e+w-s;
+            c.setTransform(tr);
+            draw();
+
+            tr.e = stored.e; tr.f = tr.f+w-s;
+            c.setTransform(tr);
+            draw();
+
+            c.setTransform(stored);
+          },
         };
 
         var drawEyeBallFunc = {
@@ -391,9 +449,9 @@
             colorFinish:'#351143',
             // Eyes
             // eyeShape:   'square',
-            // eyeColor:     '#858A8F',
-            eyeFrameShape:'circle',
-            eyeFrameColor:'#858A8F',
+            eyeColor:     'lightGray',
+            eyeFrameShape:'leaf',
+            eyeFrameColor: 'green',//'#858A8F',
             eyeBallShape: 'circle',
             eyeBallColor: '#2F0A43',
             //Logo image
