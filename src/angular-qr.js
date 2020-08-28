@@ -418,7 +418,7 @@
           c.stroke();
         };
         var drawShapedHelper = function(c,shape,w,t,d,s,r,m) {
-          var draw = drawShapeFunc[shape] || drawShapeFunc['circle'];
+          var draw = drawShapeFunc[shape] || drawShapeFunc.circle;
           var st = s-t;
           for(var i=0;i<6;i+=1/m) {
             draw(c,i*t, 0, t, t);
