@@ -335,31 +335,6 @@
           }
         };
 
-        var drawPetal = function(c,w,t,d,s,r) {
-          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
-          c.beginPath();
-          c.moveTo(p,d);
-          c.lineTo(sd-d2,d);
-          c.lineTo(sd-d2,sd-d2);
-          c.lineTo(d,sd-d2);
-          c.lineTo(d,p);
-          c.quadraticCurveTo(d,d,p,d, 0, 0);
-          c.closePath();
-          c.stroke();
-        };
-        var drawLeaf = function(c,w,t,d,s,r) {
-          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
-          c.beginPath();
-          c.moveTo(d, d);
-          c.lineTo(sd - p2, d);
-          c.quadraticCurveTo(sd - d2, d, sd - d2, p);
-          c.lineTo(sd - d2, sd - d2);
-          c.lineTo(p, sd - d2);
-          c.quadraticCurveTo(d, sd - d2, d, sd - p2);
-          c.lineTo(d, d);
-          c.closePath();
-          c.stroke();
-        };
         var drawRound = function(c,w,t,d,s,r) {
           var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
@@ -390,7 +365,74 @@
           c.closePath();
           c.stroke();
         };
-
+        var drawLeaf = function(c,w,t,d,s,r) {
+          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+          c.beginPath();
+          c.moveTo(d, d);
+          c.lineTo(sd - p2, d);
+          c.quadraticCurveTo(sd - d2, d, sd - d2, p);
+          c.lineTo(sd - d2, sd - d2);
+          c.lineTo(p, sd - d2);
+          c.quadraticCurveTo(d, sd - d2, d, sd - p2);
+          c.lineTo(d, d);
+          c.closePath();
+          c.stroke();
+        };
+        var drawLeafSharp = function(c,w,t,d,s,r) {
+          var k=2, p=t*k+d, d2=d*2, b=d+d/2, p2=t*k+d2, sd=s+d;
+          c.beginPath();
+          c.moveTo(d, d);
+          c.lineTo(sd - p2, b);
+          c.quadraticCurveTo(sd-d2, b, sd-d2, p+d);
+          c.lineTo(sd-d2, sd-d2);
+          c.lineTo(p+b, sd-d2);
+          c.quadraticCurveTo(b, sd-d2, b, sd-p2);
+          c.lineTo(d, d);
+          c.closePath();
+          c.stroke();
+        };
+        var roundCorner = function(c,w,t,d,s,r) {
+          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+          c.beginPath();
+          c.moveTo(p,d);
+          c.lineTo(sd-d2,d);
+          c.lineTo(sd-d2,sd-d2);
+          c.lineTo(d,sd-d2);
+          c.lineTo(d,p);
+          c.quadraticCurveTo(d,d,p,d, 0, 0);
+          c.closePath();
+          c.stroke();
+        };
+        var drawPetal = function(c,w,t,d,s,r) {
+          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+          c.beginPath();
+          c.moveTo(p,d);
+          c.lineTo(sd-p2,d);
+          c.quadraticCurveTo( sd-d2, d, sd-d2,p);
+          c.lineTo(sd-d2,sd-d2);
+          c.lineTo(p,sd-d2);
+          c.quadraticCurveTo(d,sd-d2,d,sd-p2);
+          c.lineTo(d,p);
+          c.quadraticCurveTo(d,d,p,d, 0, 0);
+          c.closePath();
+          c.stroke();
+        };
+        var drawShapedHelper = function(c,shape,w,t,d,s,r,m) {
+          var draw = drawShapeFunc[shape] || drawShapeFunc['circle'];
+          var st = s-t;
+          for(var i=0;i<6;i+=1/m) {
+            draw(c,i*t, 0, t, t);
+            draw(c,st-i*t, st, t, t);
+            draw(c,0, st-i*t, t, t);
+            draw(c,st, i*t, t, t);
+          }
+        };
+        var drawDotted = function(c,w,t,d,s,r) {
+          drawShapedHelper(c,'circle',w,t,d,s,r,1);
+        };
+        var drawDottedTight = function(c,w,t,d,s,r) {
+          drawShapedHelper(c,'circle',w,t,d,s,r,1.5);
+        };
 
         var drawAllEyes = function(draw,c,w,t,d,s,r) {
           var stored = c.getTransform();
@@ -434,9 +476,22 @@
           leaf: function(c,w,t,d,s,r) {
             drawAllEyes(drawLeaf,c,w,t,d,s,r);
           },
+          leafSharp: function(c,w,t,d,s,r) {
+            drawAllEyes(drawLeafSharp,c,w,t,d,s,r);
+          },
+          roundCorner: function(c,w,t,d,s,r) {
+            drawAllEyes(roundCorner,c,w,t,d,s,r);
+          },
           petal: function(c,w,t,d,s,r) {
             drawAllEyes(drawPetal,c,w,t,d,s,r);
-          }
+          },
+          dotted:function(c,w,t,d,s,r) {
+            drawAllEyes(drawDotted,c,w,t,d,s,r);
+          },
+          dottedTight:function(c,w,t,d,s,r) {
+            drawAllEyes(drawDottedTight,c,w,t,d,s,r);
+          },
+
         };
 
         var drawEyeBallFunc = {
@@ -476,7 +531,7 @@
             // eyeShape:   'square',
             // eyeColor:     'lightGray',
             // square, circle, octa, round, leaf, petal,
-            eyeFrameShape: 'petal',
+            eyeFrameShape: 'leafSharp',
             eyeFrameColor: 'red',//'#858A8F',
             eyeBallShape: 'circle',
             eyeBallColor: '#2F0A43',
