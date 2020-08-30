@@ -353,15 +353,15 @@
         var drawCookie = function(c,w,t,d,s,r) {
           var storedLineCap = c.lineCap;
           c.lineCap = 'round';
-          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d, dd=d2+d2;
+          var k=2, p=t*k+d, p2=t*k+t, sd=s+d, dd=t+t;
           c.beginPath();
           c.moveTo(p,d);
           c.lineTo(sd-p2,d);
-          c.quadraticCurveTo( sd-d2, d, sd-d2,p);
-          c.lineTo(sd-d2,sd-p2+t);
-          c.quadraticCurveTo(sd-dd,sd-dd,sd-p2+t,sd-d2);
+          c.quadraticCurveTo( sd-t, d, sd-t,p);
+          c.lineTo(sd-t,sd-p2+t);
+          c.quadraticCurveTo(sd-dd,sd-dd,sd-p2+t,sd-t);
           c.lineTo(p,sd-t);
-          c.quadraticCurveTo(d,sd-d2,d,sd-p2);
+          c.quadraticCurveTo(d,sd-t,d,sd-p2);
           c.lineTo(d,p-t);
           c.quadraticCurveTo(t+d,t+d,p-t,d, 0, 0);
           c.closePath();
