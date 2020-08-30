@@ -33,7 +33,7 @@
     };
 
     $scope.isALPHA_NUM = function(text){
-      var allowedChars = /^[0-9A-Z $%*+\-./ : ]*$/;
+      var allowedChars = /^[0-9A-Z $%*+\-./:]*$/;
       return allowedChars.test(text);
     };
 
@@ -586,8 +586,8 @@
         
         var drawEyeBallShape = function (shape, c,w,t,s,r) {
           var draw = drawShapeFunc[shape] || drawShapeFunc.square;
-          var x=t*2, y=x, w=t*3, h=w;
-          draw(c,x,y,w,h);
+          var x=t*2, h=t*3;
+          draw(c,x,x,h,h);
         };
 
         var drawEyeBallFunc = {
@@ -599,7 +599,7 @@
 
         var someShapes = ['square', 'circle', 'diamond', 'star', 'star6', 'star8'];
         someShapes.forEach(function(shape, c,w,t,s,r){
-          drawEyeBallFunc[shape] = function(c,w,t,s,r) { drawEyeBallShape(shape, c,w,t,s,r) };
+          drawEyeBallFunc[shape] = function(c,w,t,s,r) { drawEyeBallShape(shape, c,w,t,s,r); };
         });
 
         var drawAllEyeBalls = function(draw,c,w,t,s,r) {
