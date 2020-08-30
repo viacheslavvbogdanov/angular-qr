@@ -9,10 +9,10 @@
 
     $scope.getCorrection = function(){
       var levels = {
-        'L': 1,
-        'M': 0,
-        'Q': 3,
-        'H': 2
+        'L' :  1,
+        'M' :  0,
+        'Q' :  3,
+        'H' :  2
       };
 
       var correctionLevel = $scope.correctionLevel || 0;
@@ -33,7 +33,7 @@
     };
 
     $scope.isALPHA_NUM = function(text){
-      var allowedChars = /^[0-9A-Z $%*+\-./:]*$/;
+      var allowedChars = /^[0-9A-Z $%*+\-./ : ]*$/;
       return allowedChars.test(text);
     };
 
@@ -66,29 +66,29 @@
 
     $scope.getInputMode = function(text){
       var inputMode = $scope.inputMode;
-      inputMode = inputMode || ($scope.isNUMBER(text) ? 'NUMBER' : undefined);
-      inputMode = inputMode || ($scope.isALPHA_NUM(text) ? 'ALPHA_NUM' : undefined);
-      inputMode = inputMode || ($scope.is8bit(text) ? '8bit' : '');
+      inputMode = inputMode || ($scope.isNUMBER(text) ? 'NUMBER'  :  undefined);
+      inputMode = inputMode || ($scope.isALPHA_NUM(text) ? 'ALPHA_NUM'  :  undefined);
+      inputMode = inputMode || ($scope.is8bit(text) ? '8bit'  :  '');
 
-      return $scope.checkInputMode(inputMode, text) ? inputMode : '';
+      return $scope.checkInputMode(inputMode, text) ? inputMode  :  '';
     };
   }])
   .directive('qr', ['$timeout', '$window', function($timeout, $window){
 
     // noinspection JSUnusedLocalSymbols
     return {
-      restrict: 'E',
-      template: '<canvas ng-hide="image"></canvas><img alt="QR" ng-if="image" ng-src="{{canvasImage}}"/>',
-      scope: {
-        typeNumber: '=',
-        correctionLevel: '=',
-        inputMode: '=',
-        size: '=',
-        text: '=',
-        image: '='
+      restrict :  'E',
+      template :  '<canvas ng-hide="image"></canvas><img alt="QR" ng-if="image" ng-src="{{canvasImage}}"/>',
+      scope :  {
+        typeNumber :  '=',
+        correctionLevel :  '=',
+        inputMode :  '=',
+        size :  '=',
+        text :  '=',
+        image :  '='
       },
-      controller: 'QrCtrl',
-      link: function postlink(scope, element, attrs){
+      controller :  'QrCtrl',
+      link :  function postlink(scope, element, attrs){
 
         if (scope.text === undefined) {
           throw new Error('The `text` attribute is required.');
@@ -179,10 +179,10 @@
 
         var lookAround = function(qr, row, col) {
           return {
-            l: qr.isDark(row,col-1), // left
-            r: qr.isDark(row,col+1), // right
-            u: qr.isDark(row-1,col), // up
-            d: qr.isDark(row+1,col)  // down
+            l :  qr.isDark(row,col-1), // left
+            r :  qr.isDark(row,col+1), // right
+            u :  qr.isDark(row-1,col), // up
+            d :  qr.isDark(row+1,col)  // down
           };
         };
         
@@ -203,133 +203,133 @@
         };
 
         var drawShapeFunc = {
-          square: function(c, x, y, w, h) {
+          square :  function(c, x, y, w, h) {
             c.fillRect(x, y, w, h);
           },
-          squareSmall: function(c, x, y, w, h) {
+          squareSmall :  function(c, x, y, w, h) {
             var dx = w*0.1, dx2 = dx*2;
             var dy = h*0.1, dy2 = dy*2;
             c.fillRect(x+dx, y+dy, w-dx2, h-dy2);
           },
-          circle: function(c, x, y, w, h) {
+          circle :  function(c, x, y, w, h) {
             drawCircle(c, x, y, w, h,0.5);
           },
-          circleBig: function(c, x, y, w, h) {
+          circleBig :  function(c, x, y, w, h) {
             drawCircle(c, x, y, w, h,0.55);
           },
-          circleSmall: function(c, x, y, w, h) {
+          circleSmall :  function(c, x, y, w, h) {
             drawCircle(c, x, y, w, h, 0.4);
           },
-          dot: function(c, x, y, w, h) {
+          dot :  function(c, x, y, w, h) {
             drawCircle(c, x, y, w, h, 0.3);
           },
-          diamond: function(c, x, y, w, h) {
+          diamond :  function(c, x, y, w, h) {
             drawShiftedSquare(c, x, y, w, h, w/2);
           },
-          mosaic: function(c, x, y, w, h) {
+          mosaic :  function(c, x, y, w, h) {
             drawShiftedSquare(c, x, y, w, h, Math.random()*w/2);
           },
-          star: function(c, x, y, w) {
+          star :  function(c, x, y, w) {
             var r = w/2;
             drawStar(c, x+r, y+r, 5, r, r/2);
           },
-          star4: function(c, x, y, w) {
+          star4 :  function(c, x, y, w) {
             var r = w/2;
             drawStar(c, x+r, y+r, 4, r, r/3);
           },
-          star6: function(c, x, y, w) {
+          star6 :  function(c, x, y, w) {
             var r = w/2;
             drawStar(c, x+r, y+r, 6, r, r/2);
           },
-          snowflake: function(c, x, y, w) {
+          snowflake :  function(c, x, y, w) {
             var r = w/2;
             drawStar(c, x+r, y+r, 6, r, r/5);
           },
-          star8: function(c, x, y, w) {
+          star8 :  function(c, x, y, w) {
             var r = w/2;
             drawStar(c, x+r, y+r, 8, r*1.2, r/3);
           },
 
           // connected shapes
-          zebra: function(c, x, y, w, h, qr, row, col) {
+          zebra :  function(c, x, y, w, h, qr, row, col) {
             drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.8, 'circleSmall');
           },
-          zebraVertical: function(c, x, y, w, h, qr, row, col) {
+          zebraVertical :  function(c, x, y, w, h, qr, row, col) {
             drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.8, 'circleSmall');
           },
-          zebraThin: function(c, x, y, w, h, qr, row, col) {
+          zebraThin :  function(c, x, y, w, h, qr, row, col) {
             drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.6, 'dot');
           },
-          zebraThinVertical: function(c, x, y, w, h, qr, row, col) {
+          zebraThinVertical :  function(c, x, y, w, h, qr, row, col) {
             drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.6, 'dot');
           },
-          star6Vertical: function(c, x, y, w, h, qr, row, col) {
+          star6Vertical :  function(c, x, y, w, h, qr, row, col) {
             drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.5, 'star8');
           },
-          star6Horizontal: function(c, x, y, w, h, qr, row, col) {
+          star6Horizontal :  function(c, x, y, w, h, qr, row, col) {
             drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.5, 'star8');
           },
-          pcbVertical: function(c, x, y, w, h, qr, row, col) {
+          pcbVertical :  function(c, x, y, w, h, qr, row, col) {
             drawLinkedVertically(c, x, y, w, h, qr, row, col, 0.5, 'circle');
           },
-          pcbHorizontal: function(c, x, y, w, h, qr, row, col) {
+          pcbHorizontal :  function(c, x, y, w, h, qr, row, col) {
             drawLinkedHorizontally(c, x, y, w, h, qr, row, col, 0.5, 'circle');
           },
-          circleWideLinked: function(c, x, y, w, h, qr, row, col) {
+          circleWideLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 1, 'circle');
           },
-          diamondWideLinked: function(c, x, y, w, h, qr, row, col) {
+          diamondWideLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 1, 'diamond');
           },
-          pcbLinked: function(c, x, y, w, h, qr, row, col) {
+          pcbLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'circle');
           },
-          mosaicLinked: function(c, x, y, w, h, qr, row, col) {
+          mosaicLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'mosaic');
           },
-          circleLinked: function(c, x, y, w, h, qr, row, col) {
+          circleLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'circle');
           },
-          diamondLinked: function(c, x, y, w, h, qr, row, col) {
+          diamondLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'diamond');
           },
-          squareSmallLinked: function(c, x, y, w, h, qr, row, col) {
+          squareSmallLinked :  function(c, x, y, w, h, qr, row, col) {
               drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'squareSmall');
           },
-          mosaicThinLinked: function(c, x, y, w, h, qr, row, col) {
+          mosaicThinLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'mosaic');
           },
-          circleThinLinked: function(c, x, y, w, h, qr, row, col) {
+          circleThinLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'circle');
           },
-          pcbThinLinked: function(c, x, y, w, h, qr, row, col) {
+          pcbThinLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'circleSmall');
           },
-          diamondThinLinked: function(c, x, y, w, h, qr, row, col) {
+          diamondThinLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'diamond');
           },
-          squareSmallThinLinked: function(c, x, y, w, h, qr, row, col) {
+          squareSmallThinLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'squareSmall');
           },
-          star8ThinLinked: function(c, x, y, w, h, qr, row, col) {
+          star8ThinLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'star8');
           },
-          star4ThinLinked: function(c, x, y, w, h, qr, row, col) {
+          star4ThinLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'star4');
           },
 
         };
 
         var gradientFunc = {
-          diagonal:     function(c,w) {  return c.createLinearGradient(0,0, w, w);  },
-          diagonalLeft: function(c,w) {  return c.createLinearGradient(w,0, 0, w);  },
-          horizontal:   function(c,w) {  return c.createLinearGradient(0,0, w, 0);  },
-          vertical:     function(c,w) {  return c.createLinearGradient(0,0, 0, w);  },
-          radial:       function(c,w) {
+          diagonal :      function(c,w) {  return c.createLinearGradient(0,0, w, w);  },
+          diagonalLeft :  function(c,w) {  return c.createLinearGradient(w,0, 0, w);  },
+          horizontal :    function(c,w) {  return c.createLinearGradient(0,0, w, 0);  },
+          vertical :      function(c,w) {  return c.createLinearGradient(0,0, 0, w);  },
+          radial :        function(c,w) {
             var r=w/2;
             return c.createRadialGradient(r,r, r, r, r,0);
           },
-          radialInverse:function(c,w) {
+          radialInverse : function(c,w) {
             var r=w/2;
             return c.createRadialGradient(r,r, 0, r, r,r);
           }
@@ -451,10 +451,10 @@
           c.stroke();
         };
 
-        var drawShapedHelper = function(c,shape,w,t,d,s,r,m) {
+        var drawShapedHelper = function(shape,density,c,w,t,d,s,r) {
           var draw = drawShapeFunc[shape] || drawShapeFunc.circle;
           var st = s-t;
-          for(var i=0;i<6;i+=1/m) {
+          for(var i=0;i<6;i+=1/density) {
             draw(c,i*t, 0, t, t);
             draw(c,st-i*t, st, t, t);
             draw(c,0, st-i*t, t, t);
@@ -468,16 +468,15 @@
           };
         };
 
-        var drawAllEyesShaped = function(shape,density,c,w,t,d,s,r) {
-          drawAllEyes(
-            getDrawShapedFunc(shape,density,c,w,t,d,s,r),
-            c,w,t,d,s,r
-          );
-        };
+        // var drawAllEyesShaped = function(shape,density,c,w,t,d,s,r) {
+        //   drawAllEyes(
+        //     getDrawShapedFunc(shape,density,c,w,t,d,s,r),
+        //     c,w,t,d,s,r
+        //   );
+        // };
 
-        var drawAllEyes = function(draw,c,w,t,d,s,r) {
-          var stored = c.getTransform();
-          var tr = c.getTransform();
+        var drawAllEyeFrames = function(draw,c,w,t,d,s,r) {
+          var oldTransform = c.getTransform();
           draw(c,w,t,d,s,r); // top left eye
           c.rotate(Math.PI/2);
           c.translate(0,-w);
@@ -486,160 +485,157 @@
           c.rotate(-Math.PI);
           c.translate(-w,0);
           draw(c,w,t,d,s,r); // bottom left eye
-          c.setTransform(stored);
+          c.setTransform(oldTransform);
         };
 
         var drawEyeFrameFunc = {
-          square: function(c,w,t,d,s,r) {
+          square :  function(c,w,t,d,s,r) {
             var l=s-t, e=w-l-d;
             c.strokeRect(d,d,l,l);
-            c.strokeRect(e,d,l,l);
-            c.strokeRect(d,e,l,l);
           },
-          squaredSmall:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('squareSmall',1,c,w,t,d,s,r);
+          squaredSmall : function(c,w,t,d,s,r) {
+            drawShapedHelper('squareSmall',1,c,w,t,d,s,r);
           },
-          circle: function(c,w,t,d,s,r) {
+          circle :  function(c,w,t,d,s,r) {
             var rd=r-d, wr=w-r;
             c.beginPath();
             c.ellipse(r, r, rd, rd, 0, 0, 2 * Math.PI);
             c.stroke();
-            c.beginPath();
-            c.ellipse(wr, r, rd, rd, 0, 0, 2 * Math.PI);
-            c.stroke();
-            c.beginPath();
-            c.ellipse(r, wr, rd, rd, 0, 0, 2 * Math.PI);
-            c.stroke();
           },
-          octa: function(c,w,t,d,s,r) {
-            drawAllEyes(drawOcta,c,w,t,d,s,r);
+          octa :  function(c,w,t,d,s,r) {
+            drawOcta(c,w,t,d,s,r);
           },
-          round: function(c,w,t,d,s,r) {
-            drawAllEyes(drawRound,c,w,t,d,s,r);
+          round :  function(c,w,t,d,s,r) {
+            drawRound(c,w,t,d,s,r);
           },
-          leaf: function(c,w,t,d,s,r) {
-            drawAllEyes(drawLeaf,c,w,t,d,s,r);
+          leaf :  function(c,w,t,d,s,r) {
+            drawLeaf(c,w,t,d,s,r);
           },
-          leafSharp: function(c,w,t,d,s,r) {
-            drawAllEyes(drawLeafSharp,c,w,t,d,s,r);
+          leafSharp :  function(c,w,t,d,s,r) {
+            drawLeafSharp(c,w,t,d,s,r);
           },
-          roundCorner: function(c,w,t,d,s,r) {
-            drawAllEyes(roundCorner,c,w,t,d,s,r);
+          roundCorner :  function(c,w,t,d,s,r) {
+            roundCorner(c,w,t,d,s,r);
           },
-          petal: function(c,w,t,d,s,r) {
-            drawAllEyes(drawPetal,c,w,t,d,s,r);
+          petal :  function(c,w,t,d,s,r) {
+            drawPetal(c,w,t,d,s,r);
           },
-          cookie:function(c,w,t,d,s,r) {
-            drawAllEyes(drawCookie,c,w,t,d,s,r);
+          cookie : function(c,w,t,d,s,r) {
+            drawCookie(c,w,t,d,s,r);
           },
-          cookie2:function(c,w,t,d,s,r) {
-            drawAllEyes(drawCookie2,c,w,t,d,s,r);
+          cookie2 : function(c,w,t,d,s,r) {
+            drawCookie2(c,w,t,d,s,r);
           },
-          dotted:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('dot',1,c,w,t,d,s,r);
+          dotted : function(c,w,t,d,s,r) {
+            drawShapedHelper('dot',1,c,w,t,d,s,r);
           },
-          dottedTight:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('dot',1.5,c,w,t,d,s,r);
+          dottedTight : function(c,w,t,d,s,r) {
+            drawShapedHelper('dot',1.5,c,w,t,d,s,r);
           },
-          circled:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('circle',1,c,w,t,d,s,r);
+          circled : function(c,w,t,d,s,r) {
+            drawShapedHelper('circle',1,c,w,t,d,s,r);
           },
-          circledTight:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('circle',1.5,c,w,t,d,s,r);
+          circledTight : function(c,w,t,d,s,r) {
+            drawShapedHelper('circle',1.5,c,w,t,d,s,r);
           },
-          // circledBig:function(c,w,t,d,s,r) {
-          //   drawAllEyesShaped('circleBig',1,c,w,t,d,s,r);
-          // },
-          diamond:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('diamond',1,c,w,t,d,s,r);
+          diamond : function(c,w,t,d,s,r) {
+            drawShapedHelper('diamond',1,c,w,t,d,s,r);
           },
-          diamondTight:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('diamond',1.5,c,w,t,d,s,r);
+          diamondTight : function(c,w,t,d,s,r) {
+            drawShapedHelper('diamond',1.5,c,w,t,d,s,r);
           },
-          mosaic:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('mosaic',1,c,w,t,d,s,r);
+          mosaic : function(c,w,t,d,s,r) {
+            drawShapedHelper('mosaic',1,c,w,t,d,s,r);
           },
-          mosaicTight:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('mosaic',1.5,c,w,t,d,s,r);
+          mosaicTight : function(c,w,t,d,s,r) {
+            drawShapedHelper('mosaic',1.5,c,w,t,d,s,r);
           },
-          starred:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('star',1,c,w,t,d,s,r);
+          starred : function(c,w,t,d,s,r) {
+            drawShapedHelper('star',1,c,w,t,d,s,r);
           },
-          starredTight:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('star',1.5,c,w,t,d,s,r);
+          starredTight : function(c,w,t,d,s,r) {
+            drawShapedHelper('star',1.5,c,w,t,d,s,r);
           },
-          starred4:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('star4',1,c,w,t,d,s,r);
+          starred4 : function(c,w,t,d,s,r) {
+            drawShapedHelper('star4',1,c,w,t,d,s,r);
           },
-          starred4Tight:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('star4',1.5,c,w,t,d,s,r);
+          starred4Tight : function(c,w,t,d,s,r) {
+            drawShapedHelper('star4',1.5,c,w,t,d,s,r);
           },
-          starred6:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('star6',1,c,w,t,d,s,r);
+          starred6 : function(c,w,t,d,s,r) {
+            drawShapedHelper('star6',1,c,w,t,d,s,r);
           },
-          starred6Tight:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('star6',1.5,c,w,t,d,s,r);
+          starred6Tight : function(c,w,t,d,s,r) {
+            drawShapedHelper('star6',1.5,c,w,t,d,s,r);
           },
-          starred8:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('star8',1,c,w,t,d,s,r);
+          starred8 : function(c,w,t,d,s,r) {
+            drawShapedHelper('star8',1,c,w,t,d,s,r);
           },
-          starred8Tight:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('star8',1.5,c,w,t,d,s,r);
+          starred8Tight : function(c,w,t,d,s,r) {
+            drawShapedHelper('star8',1.5,c,w,t,d,s,r);
           },
-          snowflakes:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('snowflake',1,c,w,t,d,s,r);
+          snowflakes : function(c,w,t,d,s,r) {
+            drawShapedHelper('snowflake',1,c,w,t,d,s,r);
           },
-          snowflakesTight:function(c,w,t,d,s,r) {
-            drawAllEyesShaped('snowflake',1.5,c,w,t,d,s,r);
+          snowflakesTight : function(c,w,t,d,s,r) {
+            drawShapedHelper('snowflake',1.5,c,w,t,d,s,r);
           },
 
-          none:function(){}
+          none : function(){}
+        };
+        
+        var drawEyeBallShape = function (shape, c,w,t,s,r) {
+          var draw = drawShapeFunc[shape] || drawShapeFunc.square;
+          var x=t*2, y=x, w=t*3, h=w;
+          draw(c,x,y,w,h);
         };
 
         var drawEyeBallFunc = {
-          square: function(c,w,t,s,r) {
-            var e=w-r, s2=s/2, rs2=r-s2, es2=e-s2;
-            c.fillRect(rs2,rs2,s,s);
-            c.fillRect(es2,rs2,s,s);
-            c.fillRect(rs2,es2,s,s);
-          },
-          circle: function(c,w,t,s,r) {
-            var s2=s/2, wr=w-r;
-            c.beginPath();
-            c.ellipse(r, r, s2, s2, 0, 0, 2 * Math.PI);
-            c.fill();
-            c.beginPath();
-            c.ellipse(wr, r, s2, s2, 0, 0, 2 * Math.PI);
-            c.fill();
-            c.beginPath();
-            c.ellipse(r, wr, s2, s2, 0, 0, 2 * Math.PI);
-            c.fill();
-          },
+
+
+          none : function(){}
+        };
+
+
+        var someShapes = ['square', 'circle', 'diamond', 'star', 'star6', 'star8'];
+        someShapes.forEach(function(shape, c,w,t,s,r){
+          drawEyeBallFunc[shape] = function(c,w,t,s,r) { drawEyeBallShape(shape, c,w,t,s,r) };
+        });
+
+        var drawAllEyeBalls = function(draw,c,w,t,s,r) {
+          var oldTransform = c.getTransform();
+          var l = w-s*2-t;
+          draw(c,w,t,s,r); // top left eye
+          c.translate(l,0);
+          draw(c,w,t,s,r); // top right eye
+          c.translate(-l,l);
+          draw(c,w,t,s,r); // bottom left eye
+          c.setTransform(oldTransform);
         };
 
         var draw = function(context, qr, modules, tile){
           var design = {
-            // bodyShape: square, squareSmall, circle, circleBig, circleSmall,
+            // bodyShape :  square, squareSmall, circle, circleBig, circleSmall,
             // dot, diamond, mosaic, star, star4, star6, star8, snowflake
-            bodyShape:'pcbThinLinked',
-            // Gradient: diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
-            gradient:'radialInverse',
-            //MAYBE Fill pattern https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
-            color:      '#E6CA40',
-            colorMiddle:'#E6CA40',
-            colorFinish:'#351143',
+            bodyShape : 'pcbThinLinked',
+            // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
+            gradient : 'radialInverse',
+            //MAYBE Fill pattern https : //developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
+            color :       '#E6CA40',
+            colorMiddle : '#E6CA40',
+            colorFinish : '#351143',
             // Eyes
-            // eyeShape:   'square',
-            // eyeColor:     'lightGray',
+            // eyeShape :    'square',
+            // eyeColor :      'lightGray',
             // square, circle, octa, round, leaf, petal,
-            eyeFrameShape: 'snowflakesTight',
-            eyeFrameColor: 'red',//'#858A8F',
-            eyeBallShape: 'circle',
-            eyeBallColor: '#2F0A43',
+            eyeFrameShape :  'leaf',
+            eyeFrameColor :  'red',//'#858A8F',
+            eyeBallShape :  'star8',
+            eyeBallColor :  '#2F0A43',
             //Logo image
-            logoImageElementId: 'logoImage',
-            logoImageScale: 0.5,
-            removeBackgroundBehindLogo: true //TODO
+            logoImageElementId :  'logoImage',
+            logoImageScale :  0.5,
+            removeBackgroundBehindLogo :  true //TODO
             //TODO Border
             //TODO BG color
           };
@@ -689,19 +685,19 @@
 
           // Eyes Frames
           {
-            var eyeFrameShape = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
+            var eyeFrameShapeFunc = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
             context.strokeStyle = design.eyeFrameColor;
             context.lineWidth = tile;
             var delta = tile / 2, side = tile * 7, radius = side / 2;
-            eyeFrameShape(context, width, tile, delta, side, radius);
+            drawAllEyeFrames(eyeFrameShapeFunc, context, width, tile, delta, side, radius);
           }
           // Eyes Balls
           {
-            var eyeBallShape = drawEyeBallFunc[design.eyeBallShape] || drawEyeBallFunc.square;
+            var eyeBallShapeFunc = drawEyeBallFunc[design.eyeBallShape] || drawEyeBallFunc.square;
             context.fillStyle = design.eyeBallColor;
             context.lineWidth = 1;
             var ballSide = tile * 3, eyeRadius = tile * 7 / 2;
-            eyeBallShape(context, width, tile, ballSide, eyeRadius);
+            drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
           }
           // Logo Image
           var image = document.getElementById(design.logoImageElementId);
