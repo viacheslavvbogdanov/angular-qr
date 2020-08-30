@@ -350,6 +350,21 @@
           c.closePath();
           c.stroke();
         };
+        var drawCookie = function(c,w,t,d,s,r) {
+          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d, dd=sd-d2-t*2;
+          c.beginPath();
+          c.moveTo(p,d);
+          c.lineTo(sd-p2,d);
+          c.quadraticCurveTo( sd-d2, d, sd-d2,p);
+          c.lineTo(sd-d2,sd-p2);
+          c.quadraticCurveTo(dd,dd,sd-p2,sd-d2);
+          c.lineTo(p,sd-d2);
+          c.quadraticCurveTo(d,sd-d2,d,sd-p2);
+          c.lineTo(d,p);
+          c.quadraticCurveTo(d,d,p,d, 0, 0);
+          c.closePath();
+          c.stroke();
+        };
         var drawOcta = function(c,w,t,d,s,r) {
           var k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
@@ -450,10 +465,10 @@
 
         var drawEyeFrameFunc = {
           square: function(c,w,t,d,s,r) {
-            var e=w-s-d;
-            c.strokeRect(d,d,s,s);
-            c.strokeRect(e,d,s,s);
-            c.strokeRect(d,e,s,s);
+            var l=s-t, e=w-l-d;
+            c.strokeRect(d,d,l,l);
+            c.strokeRect(e,d,l,l);
+            c.strokeRect(d,e,l,l);
           },
           circle: function(c,w,t,d,s,r) {
             var rd=r-d, wr=w-r;
@@ -491,7 +506,12 @@
           dottedTight:function(c,w,t,d,s,r) {
             drawAllEyes(drawDottedTight,c,w,t,d,s,r);
           },
+          cookie:function(c,w,t,d,s,r) {
+            drawAllEyes(drawCookie,c,w,t,d,s,r);
+          },
 
+
+          none:function(){}
         };
 
         var drawEyeBallFunc = {
@@ -531,7 +551,7 @@
             // eyeShape:   'square',
             // eyeColor:     'lightGray',
             // square, circle, octa, round, leaf, petal,
-            eyeFrameShape: 'leafSharp',
+            eyeFrameShape: 'drawDotted',
             eyeFrameColor: 'red',//'#858A8F',
             eyeBallShape: 'circle',
             eyeBallColor: '#2F0A43',
