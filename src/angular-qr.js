@@ -450,6 +450,7 @@
           c.closePath();
           c.stroke();
         };
+
         var drawShapedHelper = function(c,shape,w,t,d,s,r,m) {
           var draw = drawShapeFunc[shape] || drawShapeFunc.circle;
           var st = s-t;
@@ -460,11 +461,18 @@
             draw(c,st, i*t, t, t);
           }
         };
-        var drawDotted = function(c,w,t,d,s,r) {
-          drawShapedHelper(c,'circle',w,t,d,s,r,1);
+
+        var getDrawShapedFunc = function(shape,density,c,w,t,d,s,r) {
+          return function(c,w,t,d,s,r) {
+            drawShapedHelper(c,shape,w,t,d,s,r,density);
+          };
         };
-        var drawDottedTight = function(c,w,t,d,s,r) {
-          drawShapedHelper(c,'circle',w,t,d,s,r,1.5);
+
+        var drawAllEyesShaped = function(shape,density,c,w,t,d,s,r) {
+          drawAllEyes(
+            getDrawShapedFunc(shape,density,c,w,t,d,s,r),
+            c,w,t,d,s,r
+          );
         };
 
         var drawAllEyes = function(draw,c,w,t,d,s,r) {
@@ -487,6 +495,9 @@
             c.strokeRect(d,d,l,l);
             c.strokeRect(e,d,l,l);
             c.strokeRect(d,e,l,l);
+          },
+          squaredSmall:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('squareSmall',1,c,w,t,d,s,r);
           },
           circle: function(c,w,t,d,s,r) {
             var rd=r-d, wr=w-r;
@@ -518,19 +529,69 @@
           petal: function(c,w,t,d,s,r) {
             drawAllEyes(drawPetal,c,w,t,d,s,r);
           },
-          dotted:function(c,w,t,d,s,r) {
-            drawAllEyes(drawDotted,c,w,t,d,s,r);
-          },
-          dottedTight:function(c,w,t,d,s,r) {
-            drawAllEyes(drawDottedTight,c,w,t,d,s,r);
-          },
           cookie:function(c,w,t,d,s,r) {
             drawAllEyes(drawCookie,c,w,t,d,s,r);
           },
           cookie2:function(c,w,t,d,s,r) {
             drawAllEyes(drawCookie2,c,w,t,d,s,r);
           },
-
+          dotted:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('dot',1,c,w,t,d,s,r);
+          },
+          dottedTight:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('dot',1.5,c,w,t,d,s,r);
+          },
+          circled:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('circle',1,c,w,t,d,s,r);
+          },
+          circledTight:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('circle',1.5,c,w,t,d,s,r);
+          },
+          // circledBig:function(c,w,t,d,s,r) {
+          //   drawAllEyesShaped('circleBig',1,c,w,t,d,s,r);
+          // },
+          diamond:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('diamond',1,c,w,t,d,s,r);
+          },
+          diamondTight:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('diamond',1.5,c,w,t,d,s,r);
+          },
+          mosaic:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('mosaic',1,c,w,t,d,s,r);
+          },
+          mosaicTight:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('mosaic',1.5,c,w,t,d,s,r);
+          },
+          starred:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('star',1,c,w,t,d,s,r);
+          },
+          starredTight:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('star',1.5,c,w,t,d,s,r);
+          },
+          starred4:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('star4',1,c,w,t,d,s,r);
+          },
+          starred4Tight:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('star4',1.5,c,w,t,d,s,r);
+          },
+          starred6:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('star6',1,c,w,t,d,s,r);
+          },
+          starred6Tight:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('star6',1.5,c,w,t,d,s,r);
+          },
+          starred8:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('star8',1,c,w,t,d,s,r);
+          },
+          starred8Tight:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('star8',1.5,c,w,t,d,s,r);
+          },
+          snowflakes:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('snowflake',1,c,w,t,d,s,r);
+          },
+          snowflakesTight:function(c,w,t,d,s,r) {
+            drawAllEyesShaped('snowflake',1.5,c,w,t,d,s,r);
+          },
 
           none:function(){}
         };
@@ -559,8 +620,7 @@
         var draw = function(context, qr, modules, tile){
           var design = {
             // bodyShape: square, squareSmall, circle, circleBig, circleSmall,
-            // dot, diamond, mosaic, star, star4, star6, snowflake, star8,
-            // zebra, zebraVertical
+            // dot, diamond, mosaic, star, star4, star6, star8, snowflake
             bodyShape:'pcbThinLinked',
             // Gradient: diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
             gradient:'radialInverse',
@@ -572,7 +632,7 @@
             // eyeShape:   'square',
             // eyeColor:     'lightGray',
             // square, circle, octa, round, leaf, petal,
-            eyeFrameShape: 'cookie2',
+            eyeFrameShape: 'snowflakesTight',
             eyeFrameColor: 'red',//'#858A8F',
             eyeBallShape: 'circle',
             eyeBallColor: '#2F0A43',
