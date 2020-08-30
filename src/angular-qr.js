@@ -350,6 +350,21 @@
           c.closePath();
           c.stroke();
         };
+         var drawCookie2 = function(c,w,t,d,s,r) {
+          var k=2, p=t*k+d, p2=t*k+t, sd=s+d, dd=t+t;
+          c.beginPath();
+          c.moveTo(p,d);
+          c.lineTo(sd-p2+t,d);
+          c.quadraticCurveTo( sd-dd, d+t, sd-t,p-t);
+          c.lineTo(sd-t,sd-p2);
+          c.quadraticCurveTo(sd-t,sd-t,sd-p2,sd-t);
+          c.lineTo(d+t,sd-t);
+          c.quadraticCurveTo(t+d,sd-dd,d,sd-p2+t);
+          c.lineTo(d,p);
+          c.quadraticCurveTo(d,d,p,d, 0, 0);
+          c.closePath();
+          c.stroke();
+        };
         var drawCookie = function(c,w,t,d,s,r) {
           var storedLineCap = c.lineCap;
           c.lineCap = 'round';
@@ -512,6 +527,9 @@
           cookie:function(c,w,t,d,s,r) {
             drawAllEyes(drawCookie,c,w,t,d,s,r);
           },
+          cookie2:function(c,w,t,d,s,r) {
+            drawAllEyes(drawCookie2,c,w,t,d,s,r);
+          },
 
 
           none:function(){}
@@ -554,7 +572,7 @@
             // eyeShape:   'square',
             // eyeColor:     'lightGray',
             // square, circle, octa, round, leaf, petal,
-            eyeFrameShape: 'cookie',
+            eyeFrameShape: 'cookie2',
             eyeFrameColor: 'red',//'#858A8F',
             eyeBallShape: 'circle',
             eyeBallColor: '#2F0A43',
