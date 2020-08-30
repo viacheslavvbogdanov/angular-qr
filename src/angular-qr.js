@@ -334,7 +334,7 @@
             return c.createRadialGradient(r,r, 0, r, r,r);
           }
         };
-
+        /** w - qr width, t - module widthm, d - half of module (delta), s - eye side, r - eye radius*/
         var drawRound = function(c,w,t,d,s,r) {
           var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
@@ -351,19 +351,22 @@
           c.stroke();
         };
         var drawCookie = function(c,w,t,d,s,r) {
-          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d, dd=sd-d2-t*2;
+          var storedLineCap = c.lineCap;
+          c.lineCap = 'round';
+          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d, dd=d2+d2;
           c.beginPath();
           c.moveTo(p,d);
           c.lineTo(sd-p2,d);
           c.quadraticCurveTo( sd-d2, d, sd-d2,p);
-          c.lineTo(sd-d2,sd-p2);
-          c.quadraticCurveTo(dd,dd,sd-p2,sd-d2);
-          c.lineTo(p,sd-d2);
+          c.lineTo(sd-d2,sd-p2+t);
+          c.quadraticCurveTo(sd-dd,sd-dd,sd-p2+t,sd-d2);
+          c.lineTo(p,sd-t);
           c.quadraticCurveTo(d,sd-d2,d,sd-p2);
-          c.lineTo(d,p);
-          c.quadraticCurveTo(d,d,p,d, 0, 0);
+          c.lineTo(d,p-t);
+          c.quadraticCurveTo(t+d,t+d,p-t,d, 0, 0);
           c.closePath();
           c.stroke();
+          c.lineCap = storedLineCap;
         };
         var drawOcta = function(c,w,t,d,s,r) {
           var k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
@@ -551,7 +554,7 @@
             // eyeShape:   'square',
             // eyeColor:     'lightGray',
             // square, circle, octa, round, leaf, petal,
-            eyeFrameShape: 'drawDotted',
+            eyeFrameShape: 'cookie',
             eyeFrameColor: 'red',//'#858A8F',
             eyeBallShape: 'circle',
             eyeBallColor: '#2F0A43',
