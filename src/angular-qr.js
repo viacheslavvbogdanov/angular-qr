@@ -23,6 +23,10 @@
       return $scope.text || '';
     };
 
+    $scope.getDesign = function(){
+      return $scope.design || {};
+    };
+
     $scope.getSize = function(){
       return $scope.size || 250;
     };
@@ -72,6 +76,10 @@
 
       return $scope.checkInputMode(inputMode, text) ? inputMode  :  '';
     };
+
+    $scope.getDesign = function(){
+      return $scope.design || {};
+    };
   }])
   .directive('qr', ['$timeout', '$window', function($timeout, $window){
 
@@ -85,13 +93,14 @@
         inputMode :  '=',
         size :  '=',
         text :  '=',
-        image :  '='
+        image :  '=',
+        design: '='
       },
       controller :  'QrCtrl',
       link :  function postlink(scope, element, attrs){
 
         if (scope.text === undefined) {
-          throw new Error('The `text` attribute is required.');
+          throw new Error('The "text" attribute is required.');
         }
 
         var canvas = element.find('canvas')[0];
@@ -104,6 +113,46 @@
         scope.SIZE = scope.getSize();
         scope.INPUT_MODE = scope.getInputMode(scope.TEXT);
         scope.canvasImage = '';
+        /** design */
+        var defaultDesign = {
+          // bodyShape :  square, squareSmall, circle, circleBig, circleSmall,
+          // dot, diamond, mosaic, star, star4, star6, star8, snowflake
+          //
+          // connected bodyShape: zebra, zebraVertical, zebraThin, zebraThinVertical,
+          // star6Vertical, star6Horizontal, pcbVertical, pcbHorizontal, circleWideLinked
+          // diamondLinked, diamondWideLinked, pcbLinked, mosaicLinked, circleLinked
+          // squareSmallLinked, mosaicThinLinked, circleThinLinked, pcbThinLinked, diamondThinLinked,
+          // squareSmallThinLinked, star8ThinLinked, star4ThinLinked
+          //
+          bodyShape : 'square',
+          // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
+          // gradient : null,
+          //MAYBE Fill pattern https : //developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
+          color :       '#000000',
+          colorMiddle : '#000000',
+          colorFinish : '#000000',
+          // Eyes
+          // square, circle, octa, round, leaf, petal,
+          eyeFrameShape :  'square',
+          eyeFrameColor :  '#000000',//'#858A8F',
+          eyeBallShape :  'square',
+          eyeBallColor :  '#000000',
+          //Logo image
+          logoImageElementId :  'logoImage',
+          logoImageScale :  0.5,
+          removeBackgroundBehindLogo :  true //TODO
+          //TODO Border
+          //TODO BG color
+        };
+        if (!scope['design'])
+          scope.design = defaultDesign;
+        else
+          for (var a in defaultDesign) { scope[a] = defaultDesign[a]; }
+
+        // scope.bodyShape = '';
+        // scope.color = '#000000';
+        // scope.colorMiddle = '#000000';
+
 
         var drawShiftedSquare = function(c, x, y, w, h, d) {
           c.beginPath();
@@ -278,6 +327,9 @@
           circleWideLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 1, 'circle');
           },
+          diamondLinked :  function(c, x, y, w, h, qr, row, col) {
+            drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'diamond');
+          },
           diamondWideLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 1, 'diamond');
           },
@@ -289,9 +341,6 @@
           },
           circleLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'circle');
-          },
-          diamondLinked :  function(c, x, y, w, h, qr, row, col) {
-            drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'diamond');
           },
           squareSmallLinked :  function(c, x, y, w, h, qr, row, col) {
               drawLinked(c, x, y, w, h, qr, row, col, 0.5, 'squareSmall');
@@ -316,8 +365,7 @@
           },
           star4ThinLinked :  function(c, x, y, w, h, qr, row, col) {
             drawLinked(c, x, y, w, h, qr, row, col, 0.3, 'star4');
-          },
-
+          }
         };
 
         var gradientFunc = {
@@ -613,8 +661,8 @@
           c.setTransform(oldTransform);
         };
 
-        var draw = function(context, qr, modules, tile){
-          var design = {
+        var draw = function(context, qr, modules, tile, customDesign){
+          var testDesign = {
             // bodyShape :  square, squareSmall, circle, circleBig, circleSmall,
             // dot, diamond, mosaic, star, star4, star6, star8, snowflake
             bodyShape : 'pcbThinLinked',
@@ -639,6 +687,8 @@
             //TODO Border
             //TODO BG color
           };
+          var design = defaultDesign;
+          if (customDesign) for (var a in customDesign) { design[a] = customDesign[a]; }
 
           var width  = modules*tile;
 
@@ -711,7 +761,7 @@
           }
         };
 
-        var render = function(canvas, value, typeNumber, correction, size, inputMode){
+        var render = function(canvas, value, typeNumber, correction, size, inputMode, customDesign){
           var trim = /^\s+|\s+$/g;
           var text = value.replace(trim, '');
 
@@ -726,49 +776,63 @@
           canvas.width = canvas.height = size;
 
           if (canvas2D) {
-            draw(context, qr, modules, tile);
+            draw(context, qr, modules, tile, customDesign);
             scope.canvasImage = canvas.toDataURL() || '';
           }
         };
 
-        render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE);
+        var renderQR = function () {
+          render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE, scope.design);
+        };
+        renderQR();
 
         $timeout(function(){
           scope.$watch('text', function(value, old){
             if (value !== old) {
               scope.TEXT = scope.getText();
               scope.INPUT_MODE = scope.getInputMode(scope.TEXT);
-              render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE);
+              renderQR();
             }
           });
 
           scope.$watch('correctionLevel', function(value, old){
             if (value !== old) {
               scope.CORRECTION = scope.getCorrection();
-              render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE);
+              renderQR();
+
             }
           });
 
           scope.$watch('typeNumber', function(value, old){
             if (value !== old) {
               scope.TYPE_NUMBER = scope.getTypeNumber();
-              render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE);
+              renderQR();
+
             }
           });
 
           scope.$watch('size', function(value, old){
             if (value !== old) {
               scope.SIZE = scope.getSize();
-              render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE);
+              renderQR();
+
             }
           });
 
           scope.$watch('inputMode', function(value, old){
             if (value !== old) {
               scope.INPUT_MODE = scope.getInputMode(scope.TEXT);
-              render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE);
+              renderQR();
             }
           });
+
+          scope.$watch('design', function(value, old){
+            console.log('design value', value);
+            if (value !== old) {
+              scope.design = scope.getDesign(scope.design);
+              renderQR();
+            }
+          }, true); //deep watch
         });
 
       }
