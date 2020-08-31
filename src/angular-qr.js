@@ -115,26 +115,32 @@
         scope.canvasImage = '';
         /** design */
         var defaultDesign = {
-          // bodyShape :  square, squareSmall, circle, circleBig, circleSmall,
-          // dot, diamond, mosaic, star, star4, star6, star8, snowflake
-          //
-          // connected bodyShape: zebra, zebraVertical, zebraThin, zebraThinVertical,
-          // star6Vertical, star6Horizontal, pcbVertical, pcbHorizontal, circleWideLinked
-          // diamondLinked, diamondWideLinked, pcbLinked, mosaicLinked, circleLinked
-          // squareSmallLinked, mosaicThinLinked, circleThinLinked, pcbThinLinked, diamondThinLinked,
-          // squareSmallThinLinked, star8ThinLinked, star4ThinLinked
+          // bodyShapes
+          // ['square', 'squareSmall', 'circle', 'circleBig', 'circleSmall',
+          //         'dot', 'diamond', 'mosaic', 'star', 'star4', 'star6', 'star8', 'snowflake',
+          //         'zebra', 'zebraVertical', 'zebraThin', 'zebraThinVertical',
+          //         'star6Vertical', 'star6Horizontal', 'pcbVertical', 'pcbHorizontal', 'circleWideLinked',
+          //         'diamondLinked', 'diamondWideLinked', 'pcbLinked', 'mosaicLinked', 'circleLinked',
+          //         'squareSmallLinked', 'mosaicThinLinked', 'circleThinLinked', 'pcbThinLinked', 'diamondThinLinked',
+          //         'squareSmallThinLinked', 'star8ThinLinked', 'star4ThinLinked'],
           //
           bodyShape : 'square',
-          // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
-          // gradient : null,
-          //MAYBE Fill pattern https : //developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
+          // Gradients
+          // ['none', 'diagonal', 'diagonalLeft', 'horizontal', 'vertical', 'radial', 'radialInverse']
+          //TODO MAYBE Fill pattern https : //developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
           color :       '#000000',
           colorMiddle : '#000000',
           colorFinish : '#000000',
-          // Eyes
-          // square, circle, octa, round, leaf, petal,
+          /** Eye Frames */
+          // eyeFrameShapes:
+          // ['square', 'squaredSmall', 'circle', 'octa', 'round', 'leaf', 'leafSharp', 'petal', 'cookie', 'cookie2,
+          // 'dotted', 'dottedTight', 'circled', 'circledTight', 'diamond', 'diamondTight', 'mosaic', 'mosaicTight,
+          // 'starred', 'starredTight', 'starred4', 'starred4Tight', 'starred6', 'starred6Tight', 'starred8', 'starred8Tight,
+          // 'snowflakes', 'snowflakesTight']
           eyeFrameShape :  'square',
           eyeFrameColor :  '#000000',//'#858A8F',
+          /** Eye Balls */
+          // square
           eyeBallShape :  'square',
           eyeBallColor :  '#000000',
           //Logo image
@@ -144,7 +150,7 @@
           //TODO Border
           //TODO BG color
         };
-        if (!scope['design'])
+        if (!scope.design)
           scope.design = defaultDesign;
         else
           for (var a in defaultDesign) { scope[a] = defaultDesign[a]; }
@@ -398,7 +404,7 @@
           c.closePath();
           c.stroke();
         };
-         var drawCookie2 = function(c,w,t,d,s,r) {
+        var drawCookie2 = function(c,w,t,d,s,r) {
           var k=2, p=t*k+d, p2=t*k+t, sd=s+d, dd=t+t;
           c.beginPath();
           c.moveTo(p,d);
@@ -544,12 +550,6 @@
           squaredSmall : function(c,w,t,d,s,r) {
             drawShapedHelper('squareSmall',1,c,w,t,d,s,r);
           },
-          circle :  function(c,w,t,d,s,r) {
-            var rd=r-d, wr=w-r;
-            c.beginPath();
-            c.ellipse(r, r, rd, rd, 0, 0, 2 * Math.PI);
-            c.stroke();
-          },
           octa :  function(c,w,t,d,s,r) {
             drawOcta(c,w,t,d,s,r);
           },
@@ -662,31 +662,6 @@
         };
 
         var draw = function(context, qr, modules, tile, customDesign){
-          var testDesign = {
-            // bodyShape :  square, squareSmall, circle, circleBig, circleSmall,
-            // dot, diamond, mosaic, star, star4, star6, star8, snowflake
-            bodyShape : 'pcbThinLinked',
-            // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
-            gradient : 'radialInverse',
-            //MAYBE Fill pattern https : //developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
-            color :       '#E6CA40',
-            colorMiddle : '#E6CA40',
-            colorFinish : '#351143',
-            // Eyes
-            // eyeShape :    'square',
-            // eyeColor :      'lightGray',
-            // square, circle, octa, round, leaf, petal,
-            eyeFrameShape :  'leaf',
-            eyeFrameColor :  'red',//'#858A8F',
-            eyeBallShape :  'star8',
-            eyeBallColor :  '#2F0A43',
-            //Logo image
-            logoImageElementId :  'logoImage',
-            logoImageScale :  0.5,
-            removeBackgroundBehindLogo :  true //TODO
-            //TODO Border
-            //TODO BG color
-          };
           var design = defaultDesign;
           if (customDesign) for (var a in customDesign) { design[a] = customDesign[a]; }
 
@@ -697,9 +672,8 @@
           };
 
           // fill style & gradient
-          var eyeFillStyle = design.eyeColor;
           var bodyFillStyle = design.color || '#000';
-          if (design.gradient) {
+          if (design.gradient && design.gradient!=='none') {
             bodyFillStyle = gradientFunc[design.gradient](context, width);
             bodyFillStyle.addColorStop(0, design.color || '#000');
             if (design.colorMiddle) bodyFillStyle.addColorStop(0.5, design.colorMiddle);
@@ -717,18 +691,10 @@
                   h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
 
               if (qr.isDark(row, col)) {
-                if (isEye(row, col, modules)) {
-                  if (design.eyeColor) {
-                    context.fillStyle = eyeFillStyle;
-                    eyeDrawShape(context, x, y, w, h, qr, row, col);
-                  }
-                } else {
+                if (!isEye(row, col, modules)) {
                   context.fillStyle = bodyFillStyle;
                   bodyDrawShape(context, x, y, w, h, qr, row, col);
                 }
-              } else {
-                // context.fillStyle =  '#fff';
-                // context.fillRect(x, y, w, h);
               }
             }
           } // for
@@ -736,6 +702,7 @@
           // Eyes Frames
           {
             var eyeFrameShapeFunc = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
+            context.fillStyle = design.eyeFrameColor;
             context.strokeStyle = design.eyeFrameColor;
             context.lineWidth = tile;
             var delta = tile / 2, side = tile * 7, radius = side / 2;
@@ -747,7 +714,10 @@
             context.fillStyle = design.eyeBallColor;
             context.lineWidth = 1;
             var ballSide = tile * 3, eyeRadius = tile * 7 / 2;
-            drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
+            if (design.eyeBallShape.substring(0,4)==='star')
+              drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
+            else
+              drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
           }
           // Logo Image
           var image = document.getElementById(design.logoImageElementId);

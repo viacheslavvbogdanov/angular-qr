@@ -1,274 +1,295 @@
 <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>angular-qr-donkey</title>
-  <link href='http://fonts.googleapis.com/css?family=Titillium+Web:200,300' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
-  <style>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>angular-qr-donkey</title>
+    <link href='http://fonts.googleapis.com/css?family=Titillium+Web:200,300' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+    <style>
 
-    [ng-cloak] { display: none; }
-    html, body { 
-      font-family: 'Titillium Web', sans-serif; 
-      padding: 0;
-      margin: 0;
-      text-align: center;
-    }
+        [ng-cloak] {
+            display: none;
+        }
 
-    * {
-      -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      box-sizing: border-box;
-    }
+        html, body {
+            font-family: 'Titillium Web', sans-serif;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
 
-    header, footer {
-      background: rgb(229,42,58);
-      padding: 10px 0;
-    }
+        * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        header, footer {
+            background: rgb(229, 42, 58);
+            padding: 10px 0;
+        }
 
 
-    a {
-      color: white;
-      text-decoration: none;
-    }
+        a {
+            color: white;
+            text-decoration: none;
+        }
 
-    a:hover, a:focus {
-      text-decoration: underline;
-    }
+        a:hover, a:focus {
+            text-decoration: underline;
+        }
 
-    .text-center {
-      text-align: center;
-    }
+        .text-center {
+            text-align: center;
+        }
 
-    .title {
-      color: white;
-      font-weight: 100;
-    }
+        .title {
+            color: white;
+            font-weight: 100;
+        }
 
-    .body {
-      margin: 0 auto;
-      width: 960px;
-      min-height: 600px;
-    }
+        .body {
+            margin: 0 auto;
+            width: 960px;
+            min-height: 600px;
+        }
 
-    .love {
-      display: inline-block;
-      position: relative;
-      top: .2em;
-      font-size: 1.2em;
-      color: white;
-      -webkit-transform: scale(.9);
-      -moz-transform: scale(.9);
-      transform: scale(.9);
-      -webkit-animation: love .5s infinite linear alternate-reverse;
-      -moz-animation: love .5s infinite linear alternate-reverse;
-      animation: love .5s infinite linear alternate-reverse;
-    }
+        .love {
+            display: inline-block;
+            position: relative;
+            top: .2em;
+            font-size: 1.2em;
+            color: white;
+            -webkit-transform: scale(.9);
+            -moz-transform: scale(.9);
+            transform: scale(.9);
+            -webkit-animation: love .5s infinite linear alternate-reverse;
+            -moz-animation: love .5s infinite linear alternate-reverse;
+            animation: love .5s infinite linear alternate-reverse;
+        }
 
-    @-webkit-keyframes love {
-      to {
-        -webkit-transform: scale(1.4);
-        transform: scale(1.4);
-      }
-    }
+        @-webkit-keyframes love {
+            to {
+                -webkit-transform: scale(1.4);
+                transform: scale(1.4);
+            }
+        }
 
-    @-moz-keyframes love {
-      to {
-        -moz-transform: scale(1.4);
-        transform: scale(1.4);
-      }
-    }
+        @-moz-keyframes love {
+            to {
+                -moz-transform: scale(1.4);
+                transform: scale(1.4);
+            }
+        }
 
-    @keyframes love {
-      to {
-        -webkit-transform: scale(1.4);
-        -moz-transform: scale(1.4);
-        transform: scale(1.4);
-      }
-    }
+        @keyframes love {
+            to {
+                -webkit-transform: scale(1.4);
+                -moz-transform: scale(1.4);
+                transform: scale(1.4);
+            }
+        }
 
-    .code {
-      padding: 12px 10px;
-      background-color: rgb(49,51,53);
-      color: rgb(175,186,183);
-      font-family: 'Droid Sans Mono', 'Titillium Web', sans-serif;
-      font-size: 14px;
-    }
+        .code {
+            padding: 12px 10px;
+            background-color: rgb(49, 51, 53);
+            color: rgb(175, 186, 183);
+            font-family: 'Droid Sans Mono', 'Titillium Web', sans-serif;
+            font-size: 14px;
+        }
 
-    .code-prompt {
-      font-weight: bold;
-    }
+        .code-prompt {
+            font-weight: bold;
+        }
 
-    .code-vial {
-      color: rgb(108,143,167);
-    }
+        .code-vial {
+            color: rgb(108, 143, 167);
+        }
 
-    .code-yellow {
-      color: rgb(230,151,70);
-    }
+        .code-yellow {
+            color: rgb(230, 151, 70);
+        }
 
-    .textarea {
-      width: 100%;
-      height: 100px;
-      resize: vertical; 
-      font-family: 'Droid Sans Mono', 'Titillium Web', sans-serif;
-      font-size: 28px;
-      line-height: 40px;
-    }
+        .textarea {
+            width: 100%;
+            height: 100px;
+            resize: vertical;
+            font-family: 'Droid Sans Mono', 'Titillium Web', sans-serif;
+            font-size: 28px;
+            line-height: 40px;
+        }
 
-    .range {
-      width: 100%;
-    }
+        .range {
+            width: 100%;
+        }
 
-    select {
-        font-size: x-large;
-    }
+        select {
+            font-size: xx-large;
+        }
 
     </style>
 </head>
 <body class="container" ng-app="adaptiveApp">
 
-  <div ng-controller="AdaptiveCtrl">
+<div ng-controller="AdaptiveCtrl">
 
-  <header>
-    <img id="logoImage" src="logo_image.png" width="200">
-    <h1 class="text-center title">angular-qr-donkey</h1>
-    <p class="text-center title"><i>Fancy QR code generator for AngularJS.</i></p>
+    <header>
+        <img id="logoImage" src="logo_image.png" width="200">
+        <h1 class="text-center title">angular-qr-donkey</h1>
+        <p class="text-center title"><i>Fancy QR code generator for AngularJS.</i></p>
 
-<!--    <a href="https://github.com/janantala/angular-qr"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub"></a>-->
+        <!--    <a href="https://github.com/janantala/angular-qr"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub"></a>-->
 
-<!--    <p class="code">-->
-<!--      <span class="code-prompt code-vial">❯</span> bower install <span class="code-yellow">angular-qr</span>-->
-<!--    </p>-->
+        <!--    <p class="code">-->
+        <!--      <span class="code-prompt code-vial">❯</span> bower install <span class="code-yellow">angular-qr</span>-->
+        <!--    </p>-->
 
-<!--    <p>-->
-<!--      &lt;!&ndash;suppress HtmlDeprecatedAttribute &ndash;&gt;-->
-<!--      <iframe src="http://ghbtns.com/github-btn.html?user=janantala&repo=angular-qr&type=watch&count=true"-->
-<!--    allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>-->
+        <!--    <p>-->
+        <!--      &lt;!&ndash;suppress HtmlDeprecatedAttribute &ndash;&gt;-->
+        <!--      <iframe src="http://ghbtns.com/github-btn.html?user=janantala&repo=angular-qr&type=watch&count=true"-->
+        <!--    allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>-->
 
-<!--      &lt;!&ndash;suppress HtmlDeprecatedAttribute &ndash;&gt;-->
-<!--      <iframe src="http://ghbtns.com/github-btn.html?user=janantala&repo=angular-qr&type=fork"-->
-<!--    allowtransparency="true" frameborder="0" scrolling="0" width="53" height="20"></iframe>-->
+        <!--      &lt;!&ndash;suppress HtmlDeprecatedAttribute &ndash;&gt;-->
+        <!--      <iframe src="http://ghbtns.com/github-btn.html?user=janantala&repo=angular-qr&type=fork"-->
+        <!--    allowtransparency="true" frameborder="0" scrolling="0" width="53" height="20"></iframe>-->
 
-<!--      &lt;!&ndash;suppress HtmlDeprecatedAttribute &ndash;&gt;-->
-<!--      <iframe src="http://ghbtns.com/github-btn.html?user=janantala&type=follow"-->
-<!--      allowtransparency="true" frameborder="0" scrolling="0" width="132" height="20"></iframe>-->
-<!--    </p>-->
-  </header>
+        <!--      &lt;!&ndash;suppress HtmlDeprecatedAttribute &ndash;&gt;-->
+        <!--      <iframe src="http://ghbtns.com/github-btn.html?user=janantala&type=follow"-->
+        <!--      allowtransparency="true" frameborder="0" scrolling="0" width="132" height="20"></iframe>-->
+        <!--    </p>-->
+    </header>
 
-  <div class="body">
+    <div class="body">
 
-<!--    <h3>Load dependencies:</h3>-->
+        <!--    <h3>Load dependencies:</h3>-->
 
-<!--    <p class="code code-html">-->
-<!--      <span>&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.13/angular.min.js"&gt;&lt;/script&gt;</span>-->
-<!--    </p>-->
-<!--    <p class="code code-html">-->
-<!--      <span>&lt;script src="../lib/qrcode.js"&gt;&lt;/script&gt;</span>-->
-<!--    </p>-->
-<!--    <p class="code code-html">-->
-<!--      <span>&lt;script src="../src/angular-qr.js"&gt;&lt;/script&gt;</span>-->
-<!--    </p>-->
+        <!--    <p class="code code-html">-->
+        <!--      <span>&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.13/angular.min.js"&gt;&lt;/script&gt;</span>-->
+        <!--    </p>-->
+        <!--    <p class="code code-html">-->
+        <!--      <span>&lt;script src="../lib/qrcode.js"&gt;&lt;/script&gt;</span>-->
+        <!--    </p>-->
+        <!--    <p class="code code-html">-->
+        <!--      <span>&lt;script src="../src/angular-qr.js"&gt;&lt;/script&gt;</span>-->
+        <!--    </p>-->
 
-<!--    <h3>Usage:</h3>-->
+        <!--    <h3>Usage:</h3>-->
 
-<!--    <p class="code code-html">-->
-<!--      <span class="code-vial">&lt;qr <span class="code-yellow">text="qrcodeString"</span>&gt;&lt;/qr&gt;</span>-->
-<!--    </p>-->
+        <!--    <p class="code code-html">-->
+        <!--      <span class="code-vial">&lt;qr <span class="code-yellow">text="qrcodeString"</span>&gt;&lt;/qr&gt;</span>-->
+        <!--    </p>-->
 
-    <p>
-      <qr text="qrcodeString" ng-click="refreshOnClick()" type-number="typeNumber" correction-level="correctionLevel"
-          size="size" input-mode="inputMode" image="image" design="design"></qr>
-    </p>
-
-    <p>
-      <label for="text">Text:</label>
-    </p>
-    <p>
-      <textarea id="text" class="textarea" ng-model="qrcodeString" placeholder="YOUR TEXT TO ENCODE"></textarea>
-    </p>
-
-    <h3>Design attributes:</h3>
-
-      <select name="users" ng-model="design.bodyShape">
-          <option value="square">--Select--</option>
-          <option value="circle">circle</option>
-          <option value="diamond">diamond</option>
-          <option value="star">star</option>
-      </select>
-
-    <h3>Optional attributes:</h3>
-
-    <p class="code code-html">
-      <span class="code-vial">&lt;qr <span class="code-yellow">text="qrcodeString" type-number="typeNumber" correction-level="correctionLevel" size="SIZE" input-mode="inputMode" image="image"</span>&gt;&lt;/qr&gt;</span>
-    </p>
-
-    <p>
-      <label for="typeNumber">Type Number:</label>
-      <span>{{typeNumber}} (use 0 as minimal possible)</span>
-    </p>
-    <p>
-      <input type="range" id="typeNumber" class="range" ng-model="typeNumber" min="0" max="40"/>
-    </p>
-
-    <p>
-      <label for="size">Correction Level:</label>
-      <span>{{correctionLevel}}</span>
-    </p>
-    <p>
-      <input type="radio" ng-model="correctionLevel" id="corrLevelA" value=""/>
-      <label for="corrLevelA">Auto (M)</label>
-      <input type="radio" ng-model="correctionLevel" id="corrLevelL" value="L"/>
-      <label for="corrLevelL">L (Low)</label>
-      <input type="radio" ng-model="correctionLevel" id="corrLevelM" value="M"/>
-      <label for="corrLevelM">M (Medium)</label>
-      <input type="radio" ng-model="correctionLevel" id="corrLevelQ" value="Q"/>
-      <label for="corrLevelQ">Q (Quartile)</label>
-      <input type="radio" ng-model="correctionLevel" id="corrLevelH" value="H"/>
-      <label for="corrLevelH">H (High)</label>
-    </p>
+        <p>
+            <qr text="qrcodeString" ng-click="refreshOnClick()" type-number="typeNumber"
+                correction-level="correctionLevel"
+                size="size" input-mode="inputMode" image="image" design="design"></qr>
+        </p>
 
 
-    <p>
-      <label for="size">Size:</label>
-      <span>{{size}}</span>
-    </p>
-    <p>
-      <input type="range" id="size" class="range" ng-model="size" min="100" max="500"/>
-    </p>
+        <h3>Design attributes:</h3>
 
-    <p>
-      <label>Input Mode:</label>
-      <span>{{inputMode}}</span>
-    </p>
-    <p>
-      <input type="radio" ng-model="inputMode" id="inputModeAu" value=""/>
-      <label for="inputModeAu">Auto</label>
-      <input type="radio" ng-model="inputMode" id="inputModeNu" value="NUMBER"/>
-      <label for="inputModeNu">NUMBER</label>
-      <input type="radio" ng-model="inputMode" id="inputModeAN" value="ALPHA_NUM"/>
-      <label for="inputModeAN">ALPHA_NUM</label>
-      <input type="radio" ng-model="inputMode" id="inputMode8B" value="8bit"/>
-      <label for="inputMode8B">8bit</label>
-    </p>
+        <label for="bodyShape">Body:</label><br/>
+        <select id="bodyShape" ng-model="design.bodyShape" ng-options="x for x in designValues.bodyShapes">
+        </select>
+        <br/>
+        <label for="gradient">Gradient:</label><br/>
+        <select id="gradient" ng-model="design.gradient" ng-options="x for x in designValues.gradients">
+        </select>
+        <br/>
+        <label for="eyeFrameShape">Eye Frame Shape:</label><br/>
+        <select id="eyeFrameShape" ng-model="design.eyeFrameShape" ng-options="x for x in designValues.eyeFrameShapes">
+        </select>
+        <br/>
+        <label for="eyeBallShape">Eye Ball Shape:</label><br/>
+        <select id="eyeBallShape" ng-model="design.eyeBallShape" ng-options="x for x in designValues.eyeBallShapes">
+        </select>
+        <br/>
+            <label for="logoImageScale">Logo Image Size:</label>
+            <span>{{design.logoImageScale}}</span>
+            <input type="range" id="logoImageScale" class="range" ng-model="design.logoImageScale"
+                   min="0.2" max="0.5" step="0.01"/>
 
-    <p>
-      <label>Render Image:</label>
-      <span>{{image}}</span>
-    </p>
-    <p>
-      <input type="radio" ng-model="image" ng-value="true" id="imageYes"/><label for="imageYes">Yes</label>
-      <input type="radio" ng-model="image" ng-value="false" id="imageNo"/><label for="imageNo">No</label>
-    </p>
+        <h3>Text / Link:</h3>
+<!--        <p><label for="text">Text:</label></p>-->
+        <p><textarea id="text" class="textarea" ng-model="qrcodeString" placeholder="YOUR TEXT TO ENCODE"></textarea>
+        </p>
 
-  </div>
 
-  <footer>
-    <p class="text-center">Made with <span class="love"> ♥ </span> by <a href="http://janantala.com">Jan Antala</a> & Viacheslav Bogdanov</p>
-<!--    <p class="text-center">2014-2020 Licensed under <a href="http://opensource.org/licenses/MIT">MIT</a></p>-->
-  </footer>
+
+        <h3>Optional attributes:</h3>
+
+        <p class="code code-html">
+            <span class="code-vial">&lt;qr <span class="code-yellow">text="qrcodeString" type-number="typeNumber" correction-level="correctionLevel" size="SIZE" input-mode="inputMode" image="image"</span>&gt;&lt;/qr&gt;</span>
+        </p>
+
+        <p>
+            <label for="typeNumber">Type Number:</label>
+            <span>{{typeNumber}} (use 0 as minimal possible)</span>
+        </p>
+        <p>
+            <input type="range" id="typeNumber" class="range" ng-model="typeNumber" min="0" max="40"/>
+        </p>
+
+        <p>
+            <label for="size">Correction Level:</label>
+            <span>{{correctionLevel}}</span>
+        </p>
+        <p>
+            <input type="radio" ng-model="correctionLevel" id="corrLevelA" value=""/>
+            <label for="corrLevelA">Auto (M)</label>
+            <input type="radio" ng-model="correctionLevel" id="corrLevelL" value="L"/>
+            <label for="corrLevelL">L (Low)</label>
+            <input type="radio" ng-model="correctionLevel" id="corrLevelM" value="M"/>
+            <label for="corrLevelM">M (Medium)</label>
+            <input type="radio" ng-model="correctionLevel" id="corrLevelQ" value="Q"/>
+            <label for="corrLevelQ">Q (Quartile)</label>
+            <input type="radio" ng-model="correctionLevel" id="corrLevelH" value="H"/>
+            <label for="corrLevelH">H (High)</label>
+        </p>
+
+
+        <p>
+            <label for="size">Size:</label>
+            <span>{{size}}</span>
+        </p>
+        <p>
+            <input type="range" id="size" class="range" ng-model="size" min="100" max="500"/>
+        </p>
+
+        <p>
+            <label>Input Mode:</label>
+            <span>{{inputMode}}</span>
+        </p>
+        <p>
+            <input type="radio" ng-model="inputMode" id="inputModeAu" value=""/>
+            <label for="inputModeAu">Auto</label>
+            <input type="radio" ng-model="inputMode" id="inputModeNu" value="NUMBER"/>
+            <label for="inputModeNu">NUMBER</label>
+            <input type="radio" ng-model="inputMode" id="inputModeAN" value="ALPHA_NUM"/>
+            <label for="inputModeAN">ALPHA_NUM</label>
+            <input type="radio" ng-model="inputMode" id="inputMode8B" value="8bit"/>
+            <label for="inputMode8B">8bit</label>
+        </p>
+
+        <p>
+            <label>Render Image:</label>
+            <span>{{image}}</span>
+        </p>
+        <p>
+            <input type="radio" ng-model="image" ng-value="true" id="imageYes"/><label for="imageYes">Yes</label>
+            <input type="radio" ng-model="image" ng-value="false" id="imageNo"/><label for="imageNo">No</label>
+        </p>
+
+    </div>
+
+    <footer>
+        <p class="text-center">Made with <span class="love"> ♥ </span> by <a href="http://janantala.com">Jan Antala</a>
+            & Viacheslav Bogdanov</p>
+        <!--    <p class="text-center">2014-2020 Licensed under <a href="http://opensource.org/licenses/MIT">MIT</a></p>-->
+    </footer>
 
 </div>
 
@@ -277,46 +298,57 @@
 <script src="../src/angular-qr.js"></script>
 
 <script>
-angular.module('adaptiveApp', ['ja.qr']).
-
-controller('AdaptiveCtrl', function ($scope) {
-  $scope.qrcodeString = 'QR DONKEY - THE BEST';
-  $scope.size = 400;
-  $scope.correctionLevel = 'H';
-  $scope.typeNumber = 0;
-  $scope.inputMode = '';
-  $scope.image = true;
-  // design
-  $scope.design =  {
-    // bodyShape :  square, squareSmall, circle, circleBig, circleSmall,
-    // dot, diamond, mosaic, star, star4, star6, star8, snowflake
-    bodyShape : 'pcbThinLinked',
-    // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
-    gradient : 'radialInverse',
-    //MAYBE Fill pattern https : //developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
-    color :       '#E6CA40',
-    colorMiddle : '#E6CA40',
-    colorFinish : '#351143',
-    // Eyes
-    // eyeShape :    'square',
-    // eyeColor :      'lightGray',
-    // square, circle, octa, round, leaf, petal,
-    eyeFrameShape :  'leaf',
-    eyeFrameColor :  'red',//'#858A8F',
-    eyeBallShape :  'star8',
-    eyeBallColor :  '#2F0A43',
-    //Logo image
-    logoImageElementId :  'logoImage',
-    logoImageScale :  0.5,
-    removeBackgroundBehindLogo :  true //TODO
-    //TODO Border
-    //TODO BG color
-  };
-  $scope.refreshOnClick = function() {
-    var str = $scope.qrcodeString;
-    $scope.qrcodeString = $scope.qrcodeString+'!';
-  }
-});
+  angular.module('adaptiveApp', ['ja.qr']).controller('AdaptiveCtrl', function ($scope) {
+    $scope.qrcodeString = 'QR DONKEY - THE BEST';
+    $scope.size = 400;
+    $scope.correctionLevel = 'H';
+    $scope.typeNumber = 0;
+    $scope.inputMode = '';
+    $scope.image = true;
+    // design
+    $scope.designValues = {
+      bodyShapes: ['square', 'squareSmall', 'circle', 'circleBig', 'circleSmall',
+        'dot', 'diamond', 'mosaic', 'star', 'star4', 'star6', 'star8', 'snowflake',
+        'zebra', 'zebraVertical', 'zebraThin', 'zebraThinVertical',
+        'star6Vertical', 'star6Horizontal', 'pcbVertical', 'pcbHorizontal', 'circleWideLinked',
+        'diamondLinked', 'diamondWideLinked', 'pcbLinked', 'mosaicLinked', 'circleLinked',
+        'squareSmallLinked', 'mosaicThinLinked', 'circleThinLinked', 'pcbThinLinked', 'diamondThinLinked',
+        'squareSmallThinLinked', 'star8ThinLinked', 'star4ThinLinked'],
+      gradients: ['none', 'diagonal', 'diagonalLeft', 'horizontal', 'vertical', 'radial', 'radialInverse'],
+      eyeFrameShapes: ['square', 'squaredSmall', 'circle', 'octa', 'round', 'leaf', 'leafSharp', 'petal', 'cookie', 'cookie2',
+        'dotted', 'dottedTight', 'circled', 'circledTight', 'diamond', 'diamondTight', 'mosaic', 'mosaicTight',
+        'starred', 'starredTight', 'starred4', 'starred4Tight', 'starred6', 'starred6Tight', 'starred8', 'starred8Tight',
+        'snowflakes', 'snowflakesTight'],
+      eyeBallShapes: ['square', 'circle', 'diamond', 'star8']
+    }
+    $scope.design = {
+      bodyShape: 'pcbThinLinked',
+      // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
+      gradient: 'radialInverse',
+      //MAYBE Fill pattern https : //developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
+      color: '#0000A6',
+      colorMiddle: '#351143',
+      colorFinish: '#A60000',
+      // Eyes
+      // eyeShape :    'square',
+      // eyeColor :      'lightGray',
+      // square, circle, octa, round, leaf, petal,
+      eyeFrameShape: 'leafSharp',
+      eyeFrameColor: 'red',//'#858A8F',
+      eyeBallShape: 'circle',
+      eyeBallColor: '#2F0A43',
+      //Logo image
+      logoImageElementId: 'logoImage',
+      logoImageScale: 0.5,
+      removeBackgroundBehindLogo: true //TODO
+      //TODO Border
+      //TODO BG color
+    };
+    $scope.refreshOnClick = function () {
+      var str = $scope.qrcodeString;
+      $scope.qrcodeString = $scope.qrcodeString + '!';
+    }
+  });
 </script>
 </body>
 </html>
