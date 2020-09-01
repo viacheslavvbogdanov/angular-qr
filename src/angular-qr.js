@@ -266,6 +266,7 @@
           if (near.d) c.fillRect(x+pw, y+h2, rw, h2);
         };
 
+        // noinspection JSUnusedGlobalSymbols
         var drawShapeFunc = {
           square :  function(c, x, y, w, h) {
             c.fillRect(x, y, w, h);
@@ -383,6 +384,7 @@
           }
         };
 
+        // noinspection JSUnusedGlobalSymbols
         var gradientFunc = {
           diagonal :      function(c,w) {  return c.createLinearGradient(0,0, w, w);  },
           diagonalLeft :  function(c,w) {  return c.createLinearGradient(w,0, 0, w);  },
@@ -399,9 +401,9 @@
         };
         var stokeOrFill = function (c,fill) {
           if (fill) c.fill(); else c.stroke();
-        }
+        };
 
-        /** w - qr width, t - module widthm, d - half of module (delta), s - eye side, r - eye radius*/
+        /** w - qr width, t - module width, d - half of module (delta), s - eye side, r - eye radius*/
         var drawRound = function(c,w,t,d,s,r,fill) {
           var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
@@ -498,7 +500,7 @@
         };
 
         var roundCorner = function(c,w,t,d,s,r,fill) {
-          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+          var k=2, p=t*k+d, d2=d*2, sd=s+d;
           c.beginPath();
           c.moveTo(p,d);
           c.lineTo(sd-d2,d);
@@ -525,7 +527,7 @@
           stokeOrFill(c,fill);
         };
 
-        var drawShapedHelper = function(shape,density,c,w,t,d,s,r) {
+        var drawShapedHelper = function(shape,density,c,w,t,d,s) {
           var draw = drawShapeFunc[shape] || drawShapeFunc.circle;
           var st = s-t;
           for(var i=0;i<6;i+=1/density) {
@@ -536,11 +538,11 @@
           }
         };
 
-        var getDrawShapedFunc = function(shape,density,c,w,t,d,s,r) {
-          return function(c,w,t,d,s,r) {
-            drawShapedHelper(c,shape,w,t,d,s,r,density);
-          };
-        };
+        // var getDrawShapedFunc = function(shape,density,c,w,t,d,s,r) {
+        //   return function(c,w,t,d,s,r) {
+        //     drawShapedHelper(c,shape,w,t,d,s,r,density);
+        //   };
+        // };
 
         // var drawAllEyesShaped = function(shape,density,c,w,t,d,s,r) {
         //   drawAllEyes(
@@ -562,9 +564,10 @@
           c.setTransform(oldTransform);
         };
 
+        // noinspection JSUnusedGlobalSymbols
         var drawEyeFrameFunc = {
-          square :  function(c,w,t,d,s,r) {
-            var l=s-t, e=w-l-d;
+          square :  function(c,w,t,d,s) {
+            var l=s-t;
             c.strokeRect(d,d,l,l);
           },
           squaredSmall : function(c,w,t,d,s,r) {
@@ -647,12 +650,10 @@
           },
           snowflakesTight : function(c,w,t,d,s,r) {
             drawShapedHelper('snowflake',1.5,c,w,t,d,s,r);
-          },
-
-          none : function(){}
+          }
         };
         
-        var drawEyeBallShape = function (shape, c,w,t,s,r) {
+        var drawEyeBallShape = function (shape, c,w,t) {
           var draw = drawShapeFunc[shape] || drawShapeFunc.square;
           var x=t*2, h=t*3;
           draw(c,x,x,h,h);
@@ -669,17 +670,17 @@
         var drawEyeBallFunc = {
           leaf : function(c,w,t,s,r) {
             drawFrameAsBall('leaf',c,w,t,s,r);
-          },
+          }
         };
         // add eye balls drown by bodyShape
         var someShapes = ['square', 'circle', 'diamond', 'star', 'star6', 'star8'];
-        someShapes.forEach(function(shape, c,w,t,s,r){
+        someShapes.forEach(function(shape){
           drawEyeBallFunc[shape] = function(c,w,t,s,r) { drawEyeBallShape(shape, c,w,t,s,r); };
         });
 
         // add eye balls drown by frameShape
         var frameShapes = ['octa','leaf','roundCorner','petal'];
-        frameShapes.forEach(function(shape, c,w,t,s,r){
+        frameShapes.forEach(function(shape){
           drawEyeBallFunc[shape] = function(c,w,t,s,r) { drawFrameAsBall(shape, c,w,t,s,r); };
         });
 
@@ -692,7 +693,7 @@
         };
         setDefaultDesignOptions( qrOptions.designOptions);
 
-        var drawAllEyeBalls = function(draw,c,w,t,s,r,fill) {
+        var drawAllEyeBalls = function(draw,c,w,t,s,r) {
           var oldTransform = c.getTransform();
           draw(c,w,t,s,r); // top left eye
           c.rotate(Math.PI/2);
@@ -707,7 +708,9 @@
 
         var draw = function(context, qr, modules, tile, customDesign){
           var design = defaultDesign;
-          if (customDesign) for (var a in customDesign) { design[a] = customDesign[a]; }
+          if (customDesign) for (var a in customDesign) { // noinspection JSUnfilteredForInLoop
+            design[a] = customDesign[a];
+          }
 
           var width  = modules*tile;
 
@@ -725,7 +728,6 @@
           }
 
           var bodyDrawShape = drawShapeFunc[design.bodyShape] || drawShapeFunc.square;
-          var eyeDrawShape  = drawShapeFunc[design.eyeShape ] || drawShapeFunc.square;
 
           for (var row = 0; row < modules; row++) {
             for (var col = 0; col < modules; col++) {
