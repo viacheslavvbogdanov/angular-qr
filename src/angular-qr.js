@@ -98,8 +98,7 @@
         size :  '=',
         text :  '=',
         image :  '=',
-        design: '=',
-        designOptions: '='
+        design: '='
       },
       controller :  'QrCtrl',
       link :  function postlink(scope, element, attrs){
@@ -817,16 +816,6 @@
               renderQR();
             }
           }, true); //deep watch
-          
-          // scope.$watch('designOptions', function(value, old){
-          //   console.log('design options value', value);
-          //   if (value !== old) {
-          //     setScopeDesignOptions(scope)
-          //     scope.setDesignOptions(scope.designOptions);
-          //     // scope.design = scope.getDesignOptions(scope.designOptions);
-          //     renderQR();
-          //   }
-          // }, true); //deep watch
           
         });
 

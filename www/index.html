@@ -185,7 +185,7 @@
         <p>
             <qr text="qrcodeString" ng-click="refreshOnClick()" type-number="typeNumber"
                 correction-level="correctionLevel"
-                size="size" input-mode="inputMode" image="image" design="design" designOptions="designOptions"></qr>
+                size="size" input-mode="inputMode" image="image" design="design"></qr>
         </p>
 
 
@@ -306,7 +306,6 @@
     $scope.inputMode = '';
     $scope.image = true;
     // design
-    $scope.designOptions = {}; // will be filled from qr directive
     $scope.design = {
       bodyShape: 'pcbThinLinked',
       // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
@@ -327,8 +326,8 @@
       logoImageElementId: 'logoImage',
       logoImageScale: 0.5,
       removeBackgroundBehindLogo: true //TODO
-      //TODO Border
-      //TODO BG color
+      //TODO MAYBE Border, color
+      //TODO MAYBE BG color
     };
     // console.log('scope.designOptions', $scope.designOptions);
     $scope.refreshOnClick = function () {
