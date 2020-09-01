@@ -27,6 +27,10 @@
       return $scope.design || {};
     };
 
+    $scope.setDesignOptions = function(designOptions){
+      $scope.designOptions = designOptions;
+    };
+
     $scope.getSize = function(){
       return $scope.size || 250;
     };
@@ -94,7 +98,8 @@
         size :  '=',
         text :  '=',
         image :  '=',
-        design: '='
+        design: '=',
+        designOptions: '='
       },
       controller :  'QrCtrl',
       link :  function postlink(scope, element, attrs){
@@ -152,7 +157,7 @@
         };
         if (!scope.design)
           scope.design = defaultDesign;
-        else
+        else // apply default design
           for (var a in defaultDesign) { scope[a] = defaultDesign[a]; }
 
         // scope.bodyShape = '';
@@ -644,11 +649,21 @@
           none : function(){}
         };
 
-
         var someShapes = ['square', 'circle', 'diamond', 'star', 'star6', 'star8'];
         someShapes.forEach(function(shape, c,w,t,s,r){
           drawEyeBallFunc[shape] = function(c,w,t,s,r) { drawEyeBallShape(shape, c,w,t,s,r); };
         });
+
+        // pass design possible options to scope
+        var setScopeDesignOptions = function(scope) {
+          scope.designOptions = {
+            gradients: Object.keys(gradientFunc),
+            eyeBalls: Object.keys(drawEyeBallFunc),
+            eyeFrames: Object.keys(drawEyeFrameFunc),
+            bodyShapes: Object.keys(drawShapeFunc)
+          };
+        };
+        setScopeDesignOptions(scope);
 
         var drawAllEyeBalls = function(draw,c,w,t,s,r) {
           var oldTransform = c.getTransform();
@@ -785,7 +800,6 @@
             if (value !== old) {
               scope.SIZE = scope.getSize();
               renderQR();
-
             }
           });
 
@@ -797,12 +811,23 @@
           });
 
           scope.$watch('design', function(value, old){
-            console.log('design value', value);
+            // console.log('design value', value);
             if (value !== old) {
               scope.design = scope.getDesign(scope.design);
               renderQR();
             }
           }, true); //deep watch
+          
+          // scope.$watch('designOptions', function(value, old){
+          //   console.log('design options value', value);
+          //   if (value !== old) {
+          //     setScopeDesignOptions(scope)
+          //     scope.setDesignOptions(scope.designOptions);
+          //     // scope.design = scope.getDesignOptions(scope.designOptions);
+          //     renderQR();
+          //   }
+          // }, true); //deep watch
+          
         });
 
       }

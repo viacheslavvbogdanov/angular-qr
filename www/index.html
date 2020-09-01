@@ -185,26 +185,26 @@
         <p>
             <qr text="qrcodeString" ng-click="refreshOnClick()" type-number="typeNumber"
                 correction-level="correctionLevel"
-                size="size" input-mode="inputMode" image="image" design="design"></qr>
+                size="size" input-mode="inputMode" image="image" design="design" designOptions="designOptions"></qr>
         </p>
 
 
         <h3>Design attributes:</h3>
 
         <label for="bodyShape">Body:</label><br/>
-        <select id="bodyShape" ng-model="design.bodyShape" ng-options="x for x in designValues.bodyShapes">
+        <select id="bodyShape" ng-model="design.bodyShape" ng-options="x for x in designOptions.bodyShapes">
         </select>
         <br/>
         <label for="gradient">Gradient:</label><br/>
-        <select id="gradient" ng-model="design.gradient" ng-options="x for x in designValues.gradients">
+        <select id="gradient" ng-model="design.gradient" ng-options="x for x in designOptions.gradients">
         </select>
         <br/>
         <label for="eyeFrameShape">Eye Frame Shape:</label><br/>
-        <select id="eyeFrameShape" ng-model="design.eyeFrameShape" ng-options="x for x in designValues.eyeFrameShapes">
+        <select id="eyeFrameShape" ng-model="design.eyeFrameShape" ng-options="x for x in designOptions.eyeFrameShapes">
         </select>
         <br/>
         <label for="eyeBallShape">Eye Ball Shape:</label><br/>
-        <select id="eyeBallShape" ng-model="design.eyeBallShape" ng-options="x for x in designValues.eyeBallShapes">
+        <select id="eyeBallShape" ng-model="design.eyeBallShape" ng-options="x for x in designOptions.eyeBallShapes">
         </select>
         <br/>
             <label for="logoImageScale">Logo Image Size:</label>
@@ -306,21 +306,7 @@
     $scope.inputMode = '';
     $scope.image = true;
     // design
-    $scope.designValues = {
-      bodyShapes: ['square', 'squareSmall', 'circle', 'circleBig', 'circleSmall',
-        'dot', 'diamond', 'mosaic', 'star', 'star4', 'star6', 'star8', 'snowflake',
-        'zebra', 'zebraVertical', 'zebraThin', 'zebraThinVertical',
-        'star6Vertical', 'star6Horizontal', 'pcbVertical', 'pcbHorizontal', 'circleWideLinked',
-        'diamondLinked', 'diamondWideLinked', 'pcbLinked', 'mosaicLinked', 'circleLinked',
-        'squareSmallLinked', 'mosaicThinLinked', 'circleThinLinked', 'pcbThinLinked', 'diamondThinLinked',
-        'squareSmallThinLinked', 'star8ThinLinked', 'star4ThinLinked'],
-      gradients: ['none', 'diagonal', 'diagonalLeft', 'horizontal', 'vertical', 'radial', 'radialInverse'],
-      eyeFrameShapes: ['square', 'squaredSmall', 'circle', 'octa', 'round', 'leaf', 'leafSharp', 'petal', 'cookie', 'cookie2',
-        'dotted', 'dottedTight', 'circled', 'circledTight', 'diamond', 'diamondTight', 'mosaic', 'mosaicTight',
-        'starred', 'starredTight', 'starred4', 'starred4Tight', 'starred6', 'starred6Tight', 'starred8', 'starred8Tight',
-        'snowflakes', 'snowflakesTight'],
-      eyeBallShapes: ['square', 'circle', 'diamond', 'star8']
-    }
+    $scope.designOptions = {}; // will be filled from qr directive
     $scope.design = {
       bodyShape: 'pcbThinLinked',
       // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
@@ -344,6 +330,7 @@
       //TODO Border
       //TODO BG color
     };
+    // console.log('scope.designOptions', $scope.designOptions);
     $scope.refreshOnClick = function () {
       var str = $scope.qrcodeString;
       $scope.qrcodeString = $scope.qrcodeString + '!';
