@@ -2,6 +2,10 @@
   'use strict';
 
   angular.module('ja.qr', [])
+    .factory('qrOptions', function() {
+      var designOptions = {};
+      return { designOptions: designOptions };
+    })
   .controller('QrCtrl', ['$scope', function($scope){
     $scope.getTypeNumber = function(){
       return $scope.typeNumber || 0;
@@ -27,8 +31,8 @@
       return $scope.design || {};
     };
 
-    $scope.setDesignOptions = function(designOptions){
-      $scope.designOptions = designOptions;
+    $scope.getDesignOptions = function(storedDesignOptions){
+      return $scope.designOptions || storedDesignOptions;
     };
 
     $scope.getSize = function(){
@@ -85,7 +89,7 @@
       return $scope.design || {};
     };
   }])
-  .directive('qr', ['$timeout', '$window', function($timeout, $window){
+  .directive('qr', ['$timeout', '$window', 'qrOptions', function($timeout, $window, qrOptions){
 
     // noinspection JSUnusedLocalSymbols
     return {
@@ -98,7 +102,8 @@
         size :  '=',
         text :  '=',
         image :  '=',
-        design: '='
+        design: '=',
+        designOptions: '='
       },
       controller :  'QrCtrl',
       link :  function postlink(scope, element, attrs){
@@ -392,8 +397,12 @@
             return c.createRadialGradient(r,r, 0, r, r,r);
           }
         };
+        var stokeOrFill = function (c,fill) {
+          if (fill) c.fill(); else c.stroke();
+        }
+
         /** w - qr width, t - module widthm, d - half of module (delta), s - eye side, r - eye radius*/
-        var drawRound = function(c,w,t,d,s,r) {
+        var drawRound = function(c,w,t,d,s,r,fill) {
           var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
           c.moveTo(p,d);
@@ -406,9 +415,10 @@
           c.lineTo(d,p);
           c.quadraticCurveTo(d,d,p,d, 0, 0);
           c.closePath();
-          c.stroke();
+          stokeOrFill(c,fill);
         };
-        var drawCookie2 = function(c,w,t,d,s,r) {
+
+        var drawCookie2 = function(c,w,t,d,s,r,fill) {
           var k=2, p=t*k+d, p2=t*k+t, sd=s+d, dd=t+t;
           c.beginPath();
           c.moveTo(p,d);
@@ -421,9 +431,10 @@
           c.lineTo(d,p);
           c.quadraticCurveTo(d,d,p,d, 0, 0);
           c.closePath();
-          c.stroke();
+          stokeOrFill(c,fill);
         };
-        var drawCookie = function(c,w,t,d,s,r) {
+
+        var drawCookie = function(c,w,t,d,s,r,fill) {
           var storedLineCap = c.lineCap;
           c.lineCap = 'round';
           var k=2, p=t*k+d, p2=t*k+t, sd=s+d, dd=t+t;
@@ -438,10 +449,11 @@
           c.lineTo(d,p-t);
           c.quadraticCurveTo(t+d,t+d,p-t,d, 0, 0);
           c.closePath();
-          c.stroke();
+          stokeOrFill(c,fill);
           c.lineCap = storedLineCap;
         };
-        var drawOcta = function(c,w,t,d,s,r) {
+
+        var drawOcta = function(c,w,t,d,s,r,fill) {
           var k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
           c.moveTo(p,d);
@@ -454,9 +466,10 @@
           c.lineTo(d,p);
           c.lineTo(p,d);
           c.closePath();
-          c.stroke();
+          stokeOrFill(c,fill);
         };
-        var drawLeaf = function(c,w,t,d,s,r) {
+
+        var drawLeaf = function(c,w,t,d,s,r,fill) {
           var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
           c.moveTo(d, d);
@@ -467,9 +480,10 @@
           c.quadraticCurveTo(d, sd - d2, d, sd - p2);
           c.lineTo(d, d);
           c.closePath();
-          c.stroke();
+          stokeOrFill(c,fill);
         };
-        var drawLeafSharp = function(c,w,t,d,s,r) {
+
+        var drawLeafSharp = function(c,w,t,d,s,r,fill) {
           var k=2, p=t*k+d, d2=d*2, b=d+d/2, p2=t*k+d2, sd=s+d;
           c.beginPath();
           c.moveTo(d, d);
@@ -480,9 +494,10 @@
           c.quadraticCurveTo(b, sd-d2, b, sd-p2);
           c.lineTo(d, d);
           c.closePath();
-          c.stroke();
+          stokeOrFill(c,fill);
         };
-        var roundCorner = function(c,w,t,d,s,r) {
+
+        var roundCorner = function(c,w,t,d,s,r,fill) {
           var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
           c.moveTo(p,d);
@@ -492,9 +507,10 @@
           c.lineTo(d,p);
           c.quadraticCurveTo(d,d,p,d, 0, 0);
           c.closePath();
-          c.stroke();
+          stokeOrFill(c,fill);
         };
-        var drawPetal = function(c,w,t,d,s,r) {
+
+        var drawPetal = function(c,w,t,d,s,r,fill) {
           var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
           c.moveTo(p,d);
@@ -506,7 +522,7 @@
           c.lineTo(d,p);
           c.quadraticCurveTo(d,d,p,d, 0, 0);
           c.closePath();
-          c.stroke();
+          stokeOrFill(c,fill);
         };
 
         var drawShapedHelper = function(shape,density,c,w,t,d,s,r) {
@@ -554,29 +570,29 @@
           squaredSmall : function(c,w,t,d,s,r) {
             drawShapedHelper('squareSmall',1,c,w,t,d,s,r);
           },
-          octa :  function(c,w,t,d,s,r) {
-            drawOcta(c,w,t,d,s,r);
+          octa :  function(c,w,t,d,s,r,fill) {
+            drawOcta(c,w,t,d,s,r,fill);
           },
-          round :  function(c,w,t,d,s,r) {
-            drawRound(c,w,t,d,s,r);
+          round :  function(c,w,t,d,s,r,fill) {
+            drawRound(c,w,t,d,s,r,fill);
           },
-          leaf :  function(c,w,t,d,s,r) {
-            drawLeaf(c,w,t,d,s,r);
+          leaf :  function(c,w,t,d,s,r,fill) {
+            drawLeaf(c,w,t,d,s,r,fill);
           },
-          leafSharp :  function(c,w,t,d,s,r) {
-            drawLeafSharp(c,w,t,d,s,r);
+          leafSharp :  function(c,w,t,d,s,r,fill) {
+            drawLeafSharp(c,w,t,d,s,r,fill);
           },
-          roundCorner :  function(c,w,t,d,s,r) {
-            roundCorner(c,w,t,d,s,r);
+          roundCorner :  function(c,w,t,d,s,r,fill) {
+            roundCorner(c,w,t,d,s,r,fill);
           },
-          petal :  function(c,w,t,d,s,r) {
-            drawPetal(c,w,t,d,s,r);
+          petal :  function(c,w,t,d,s,r,fill) {
+            drawPetal(c,w,t,d,s,r,fill);
           },
-          cookie : function(c,w,t,d,s,r) {
-            drawCookie(c,w,t,d,s,r);
+          cookie : function(c,w,t,d,s,r,fill) {
+            drawCookie(c,w,t,d,s,r,fill);
           },
-          cookie2 : function(c,w,t,d,s,r) {
-            drawCookie2(c,w,t,d,s,r);
+          cookie2 : function(c,w,t,d,s,r,fill) {
+            drawCookie2(c,w,t,d,s,r,fill);
           },
           dotted : function(c,w,t,d,s,r) {
             drawShapedHelper('dot',1,c,w,t,d,s,r);
@@ -642,35 +658,49 @@
           draw(c,x,x,h,h);
         };
 
-        var drawEyeBallFunc = {
-
-
-          none : function(){}
+        var drawFrameAsBall = function (frameShape, c,w,t,s,r) {
+          var draw = drawEyeFrameFunc[frameShape] || drawEyeFrameFunc.square;
+          c.translate(t*2,t*2);
+          //c,w,t,d,s,r,fill
+          draw(c, w, t, 0, s, r, true);
+          c.translate(-t*2,-t*2);
         };
 
+        var drawEyeBallFunc = {
+          leaf : function(c,w,t,s,r) {
+            drawFrameAsBall('leaf',c,w,t,s,r);
+          },
+        };
+        // add eye balls drown by bodyShape
         var someShapes = ['square', 'circle', 'diamond', 'star', 'star6', 'star8'];
         someShapes.forEach(function(shape, c,w,t,s,r){
           drawEyeBallFunc[shape] = function(c,w,t,s,r) { drawEyeBallShape(shape, c,w,t,s,r); };
         });
 
-        // pass design possible options to scope
-        var setScopeDesignOptions = function(scope) {
-          scope.designOptions = {
-            gradients: Object.keys(gradientFunc),
-            eyeBalls: Object.keys(drawEyeBallFunc),
-            eyeFrames: Object.keys(drawEyeFrameFunc),
-            bodyShapes: Object.keys(drawShapeFunc)
-          };
-        };
-        setScopeDesignOptions(scope);
+        // add eye balls drown by frameShape
+        var frameShapes = ['octa','leaf','roundCorner','petal'];
+        frameShapes.forEach(function(shape, c,w,t,s,r){
+          drawEyeBallFunc[shape] = function(c,w,t,s,r) { drawFrameAsBall(shape, c,w,t,s,r); };
+        });
 
-        var drawAllEyeBalls = function(draw,c,w,t,s,r) {
+        // pass design possible options to scope
+        var setDefaultDesignOptions = function(designOptions) {
+          designOptions.gradients      = Object.keys(gradientFunc);
+          designOptions.eyeBallShapes  = Object.keys(drawEyeBallFunc);
+          designOptions.eyeFrameShapes = Object.keys(drawEyeFrameFunc);
+          designOptions.bodyShapes     = Object.keys(drawShapeFunc);
+        };
+        setDefaultDesignOptions( qrOptions.designOptions);
+
+        var drawAllEyeBalls = function(draw,c,w,t,s,r,fill) {
           var oldTransform = c.getTransform();
-          var l = w-s*2-t;
           draw(c,w,t,s,r); // top left eye
-          c.translate(l,0);
+          c.rotate(Math.PI/2);
+          c.translate(0,-w);
           draw(c,w,t,s,r); // top right eye
-          c.translate(-l,l);
+          c.translate(0,w);
+          c.rotate(-Math.PI);
+          c.translate(-w,0);
           draw(c,w,t,s,r); // bottom left eye
           c.setTransform(oldTransform);
         };
@@ -770,6 +800,7 @@
         };
         renderQR();
 
+        // Watchers
         $timeout(function(){
           scope.$watch('text', function(value, old){
             if (value !== old) {
@@ -816,7 +847,7 @@
               renderQR();
             }
           }, true); //deep watch
-          
+
         });
 
       }
