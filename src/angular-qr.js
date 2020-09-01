@@ -403,6 +403,7 @@
           if (fill) c.fill(); else c.stroke();
         };
 
+        // noinspection DuplicatedCode
         /** w - qr width, t - module width, d - half of module (delta), s - eye side, r - eye radius*/
         var drawRound = function(c,w,t,d,s,r,fill) {
           var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
@@ -415,7 +416,7 @@
           c.lineTo(p,sd-d2);
           c.quadraticCurveTo(d,sd-d2,d,sd-p2);
           c.lineTo(d,p);
-          c.quadraticCurveTo(d,d,p,d, 0, 0);
+          c.quadraticCurveTo(d,d,p,d);
           c.closePath();
           stokeOrFill(c,fill);
         };
@@ -431,7 +432,7 @@
           c.lineTo(d+t,sd-t);
           c.quadraticCurveTo(t+d,sd-dd,d,sd-p2+t);
           c.lineTo(d,p);
-          c.quadraticCurveTo(d,d,p,d, 0, 0);
+          c.quadraticCurveTo(d,d,p,d);
           c.closePath();
           stokeOrFill(c,fill);
         };
@@ -449,7 +450,7 @@
           c.lineTo(p,sd-t);
           c.quadraticCurveTo(d,sd-t,d,sd-p2);
           c.lineTo(d,p-t);
-          c.quadraticCurveTo(t+d,t+d,p-t,d, 0, 0);
+          c.quadraticCurveTo(t+d,t+d,p-t,d);
           c.closePath();
           stokeOrFill(c,fill);
           c.lineCap = storedLineCap;
@@ -471,6 +472,7 @@
           stokeOrFill(c,fill);
         };
 
+        // noinspection DuplicatedCode
         var drawLeaf = function(c,w,t,d,s,r,fill) {
           var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
@@ -507,11 +509,12 @@
           c.lineTo(sd-d2,sd-d2);
           c.lineTo(d,sd-d2);
           c.lineTo(d,p);
-          c.quadraticCurveTo(d,d,p,d, 0, 0);
+          c.quadraticCurveTo(d,d,p,d);
           c.closePath();
           stokeOrFill(c,fill);
         };
 
+        // noinspection DuplicatedCode
         var drawPetal = function(c,w,t,d,s,r,fill) {
           var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
@@ -522,7 +525,7 @@
           c.lineTo(p,sd-d2);
           c.quadraticCurveTo(d,sd-d2,d,sd-p2);
           c.lineTo(d,p);
-          c.quadraticCurveTo(d,d,p,d, 0, 0);
+          c.quadraticCurveTo(d,d,p,d);
           c.closePath();
           stokeOrFill(c,fill);
         };
