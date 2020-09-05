@@ -1,3 +1,5 @@
+//TODO qr render preview
+//MAYBE design option select directive (gradients, body / eye frame / eye ball shapes)
 (function(QRCode){
   'use strict';
 
