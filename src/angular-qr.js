@@ -809,6 +809,26 @@
           c.fill();
         };
 
+        drawEyeBallFunc.petalCaved = function(c,w,t,s,r) {
+          var d=0, k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s;
+          // d=t*2;
+          var oldTransform = c.getTransform();
+          c.translate(t*2,t*2);
+          c.beginPath();
+          c.moveTo(p,d);
+          c.lineTo(sd-p2,d);
+          c.quadraticCurveTo( sd-d2, d, sd-d2,p);
+          c.lineTo(sd-d2,sd-d2);
+          c.quadraticCurveTo(t*2, sd-d2-t/3,p,sd-d2);
+          c.quadraticCurveTo(d,sd-d2,d,sd-p2);
+          c.lineTo(d,p);
+          c.quadraticCurveTo(d,d,p,d);
+          c.closePath();
+          c.fill();
+          c.setTransform(oldTransform);
+        };
+
+
         // pass design possible options to scope
         var setDefaultDesignOptions = function(designOptions) {
           designOptions.gradients      = Object.keys(gradientFunc);
