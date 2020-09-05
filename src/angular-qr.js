@@ -545,14 +545,17 @@
         };
 
         // noinspection DuplicatedCode
-        var drawPetal = function(c,w,t,d,s,r,fill) {
+        var drawPetal = function(c,w,t,d,s,r,fill,caved) {
           var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
           c.beginPath();
           c.moveTo(p,d);
           c.lineTo(sd-p2,d);
           c.quadraticCurveTo( sd-d2, d, sd-d2,p);
           c.lineTo(sd-d2,sd-d2);
-          c.lineTo(p,sd-d2);
+          if (caved)
+            c.quadraticCurveTo(sd-d2-t*2, sd-d2-t/3,p,sd-d2);
+          else
+            c.lineTo(p,sd-d2);
           c.quadraticCurveTo(d,sd-d2,d,sd-p2);
           c.lineTo(d,p);
           c.quadraticCurveTo(d,d,p,d);
@@ -648,6 +651,9 @@
           },
           petal :  function(c,w,t,d,s,r,fill) {
             drawPetal(c,w,t,d,s,r,fill);
+          },
+          petalCaved :  function(c,w,t,d,s,r,fill) {
+            drawPetal(c,w,t,d,s,r,fill,true);
           },
           cookie : function(c,w,t,d,s,r,fill) {
             drawCookie(c,w,t,d,s,r,fill);
