@@ -176,6 +176,7 @@
           c.lineTo(x+w-d,y+h);
           c.lineTo(x,y+h-d);
           c.lineTo(x+d,y);
+          c.closePath();
           c.fill();
         };
 
@@ -183,6 +184,7 @@
           var w2 = w/2, h2 = h/2;
           c.beginPath();
           c.ellipse(x+w2,y+h2, w*r, h*r, 0, 0, Math.PI*2);
+          c.closePath();
           c.fill();
         };
 
@@ -530,6 +532,18 @@
           stokeOrFill(c,fill);
         };
 
+        var drawPillow = function(c,w,t,d,s,r,fill) {
+          var x = d+d/2, l = t * 7 -(d+d/2), p = t * 7 / 2, cc = t*2+d-d/3;
+          c.beginPath();
+          c.moveTo(x, x);
+          c.quadraticCurveTo(p, p - cc, l, x);
+          c.quadraticCurveTo(p + cc, p, l, l);
+          c.quadraticCurveTo(p, p + cc, x, l);
+          c.quadraticCurveTo(p - cc, p, x, x);
+          c.closePath();
+          stokeOrFill(c,fill);
+        }
+
         var drawShapedHelper = function(shape,density,c,w,t,d,s,r,fill) {
           var draw = drawShapeFunc[shape] || drawShapeFunc.circle;
           var st = s-t;
@@ -594,6 +608,9 @@
           },
           roundCorner :  function(c,w,t,d,s,r,fill) {
             roundCorner(c,w,t,d,s,r,fill);
+          },
+          pillow :  function(c,w,t,d,s,r,fill) {
+            drawPillow(c,w,t,d,s,r,fill);
           },
           petal :  function(c,w,t,d,s,r,fill) {
             drawPetal(c,w,t,d,s,r,fill);
@@ -683,7 +700,7 @@
 
         // add eye balls drown by frameShape
         var frameShapes = ['octa', 'round',  'leaf','leafSharp', 'cookie', 'cookie2', 'roundCorner','petal',
-          'circled', 'diamonds'];
+          'circled', 'diamonds','mosaic'];
         frameShapes.forEach(function(shape){
           drawEyeBallFunc[shape] = function(c,w,t,s,r) { drawFrameAsBall(shape, c,w,t,s,r); };
         });
@@ -693,10 +710,51 @@
             for(var j in [0,1,2])
               drawCircle(c,t*j+t*2,t*i+t*2,t,t,0.5);
         };
-        drawEyeBallFunc.test = function(c,w,t,s,r) {
+        drawEyeBallFunc.nineFilled = function(c,w,t,s,r) {
+          var t2=t*2;
           for(var i in [0,1,2])
             for(var j in [0,1,2])
-              drawCircle(c,t*j+t*2,t*i+t*2,t,t,0.5);
+              drawCircle(c,t*j+t2,t*i+t2,t,t,0.5);
+          var l=t2+t/2;
+          c.fillRect(l,l,t2,t2);
+        };
+        drawEyeBallFunc.nineMosaic = function(c,w,t,s,r) {
+          var t2=t*2, t22=t2*2;
+          for(var i in [0,1,2])
+            for(var j in [0,1,2])
+              drawShiftedSquare(c, t*j+t2,t*i+t2,t,t, Math.random()*t/2);
+          var l=t2+t/2;
+          c.fillRect(l,l,t2,t2);
+        };
+        drawEyeBallFunc.asterisk = function(c,w,t,s,r) {
+          var t2=t*2, t22=t2*2;
+          for(var i in [0,1,2])
+            for(var j in [0,1,2])
+              drawShiftedSquare(c, t*j+t2,t*i+t2,t,t, (i%2+j%2)%2?0:t/2);
+          var l=t2+t/2;
+          c.fillRect(l,l,t2,t2);
+        };
+        drawEyeBallFunc.pillow = function(c,w,t,s,r) {
+          var x=t*2, l=t*5, p=x+t*3/2, cc=t;
+          c.beginPath();
+          c.moveTo(x,x);
+          c.quadraticCurveTo(p,p-cc,l,x);
+          c.quadraticCurveTo(p+cc,p,l,l);
+          c.quadraticCurveTo(p,p+cc,x,l);
+          c.quadraticCurveTo(p-cc,p,x,x);
+          c.closePath();
+          c.fill();
+        };
+        drawEyeBallFunc.test = function(c,w,t,s,r) {
+          var x=t*2, l=t*5, p=x+t*3/2, cc=t;
+          c.beginPath();
+          c.moveTo(x,x);
+          c.quadraticCurveTo(p,p-cc,l,x);
+          c.quadraticCurveTo(p+cc,p,l,l);
+          c.quadraticCurveTo(p,p+cc,x,l);
+          c.quadraticCurveTo(p-cc,p,x,x);
+          c.closePath();
+          c.fill();
         };
 
         // pass design possible options to scope
