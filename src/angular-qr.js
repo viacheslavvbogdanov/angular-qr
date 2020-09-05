@@ -422,7 +422,7 @@
         };
 
         var drawCookie2 = function(c,w,t,d,s,r,fill) {
-          var k=2, p=t*k+d, p2=t*k+t, sd=s+d, dd=t+t;
+          var k=2, p=t*k+d, p2=t*k+t, dd=t+t, sd=fill? s+t:s+d;
           c.beginPath();
           c.moveTo(p,d);
           c.lineTo(sd-p2+t,d);
@@ -440,7 +440,7 @@
         var drawCookie = function(c,w,t,d,s,r,fill) {
           var storedLineCap = c.lineCap;
           c.lineCap = 'round';
-          var k=2, p=t*k+d, p2=t*k+t, sd=s+d, dd=t+t;
+          var k=2, p=t*k+d, p2=t*k+t, dd=t+t, sd=fill? s+t:s+d;
           c.beginPath();
           c.moveTo(p,d);
           c.lineTo(sd-p2,d);
@@ -457,7 +457,7 @@
         };
 
         var drawOcta = function(c,w,t,d,s,r,fill) {
-          var k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+          var k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=fill? s+t:s+d;
           c.beginPath();
           c.moveTo(p,d);
           c.lineTo(sd-p2,d);
@@ -488,7 +488,7 @@
         };
 
         var drawLeafSharp = function(c,w,t,d,s,r,fill) {
-          var k=2, p=t*k+d, d2=d*2, b=d+d/2, p2=t*k+d2, sd=s+d;
+          var k=2, p=t*k+d, d2=t, b=t/2+d/2, p2=t*k+d, sd=fill? s+t:s+d;
           c.beginPath();
           c.moveTo(d, d);
           c.lineTo(sd - p2, b);
@@ -530,7 +530,7 @@
           stokeOrFill(c,fill);
         };
 
-        var drawShapedHelper = function(shape,density,c,w,t,d,s) {
+        var drawShapedHelper = function(shape,density,c,w,t,d,s,r,fill) {
           var draw = drawShapeFunc[shape] || drawShapeFunc.circle;
           var st = s-t;
           for(var i=0;i<6;i+=1/density) {
@@ -538,6 +538,10 @@
             draw(c,st-i*t, st, t, t);
             draw(c,0, st-i*t, t, t);
             draw(c,st, i*t, t, t);
+          }
+          if (fill) {
+            var l=t/2;
+            c.fillRect(l,l,s-t,s-t);
           }
         };
 
@@ -606,20 +610,20 @@
           dottedTight : function(c,w,t,d,s,r) {
             drawShapedHelper('dot',1.5,c,w,t,d,s,r);
           },
-          circled : function(c,w,t,d,s,r) {
-            drawShapedHelper('circle',1,c,w,t,d,s,r);
+          circled : function(c,w,t,d,s,r,fill) {
+            drawShapedHelper('circle',1,c,w,t,d,s,r,fill);
           },
           circledTight : function(c,w,t,d,s,r) {
             drawShapedHelper('circle',1.5,c,w,t,d,s,r);
           },
-          diamond : function(c,w,t,d,s,r) {
-            drawShapedHelper('diamond',1,c,w,t,d,s,r);
+          diamonds : function(c,w,t,d,s,r,fill) {
+            drawShapedHelper('diamond',1,c,w,t,d,s,r,fill);
           },
-          diamondTight : function(c,w,t,d,s,r) {
+          diamondsTight : function(c,w,t,d,s,r) {
             drawShapedHelper('diamond',1.5,c,w,t,d,s,r);
           },
-          mosaic : function(c,w,t,d,s,r) {
-            drawShapedHelper('mosaic',1,c,w,t,d,s,r);
+          mosaic : function(c,w,t,d,s,r,fill) {
+            drawShapedHelper('mosaic',1,c,w,t,d,s,r,fill);
           },
           mosaicTight : function(c,w,t,d,s,r) {
             drawShapedHelper('mosaic',1.5,c,w,t,d,s,r);
@@ -666,26 +670,34 @@
           var draw = drawEyeFrameFunc[frameShape] || drawEyeFrameFunc.square;
           c.translate(t*2,t*2);
           //c,w,t,d,s,r,fill
-          draw(c, w, t, 0, s, r, true);
+          draw(c, w, t/7*3, 0, s, r, true);
           c.translate(-t*2,-t*2);
         };
 
-        var drawEyeBallFunc = {
-          leaf : function(c,w,t,s,r) {
-            drawFrameAsBall('leaf',c,w,t,s,r);
-          }
-        };
+        var drawEyeBallFunc = {};
         // add eye balls drown by bodyShape
-        var someShapes = ['square', 'circle', 'diamond', 'star', 'star6', 'star8'];
+        var someShapes = ['square','circle', 'diamond', 'star', 'star6', 'star8'];
         someShapes.forEach(function(shape){
           drawEyeBallFunc[shape] = function(c,w,t,s,r) { drawEyeBallShape(shape, c,w,t,s,r); };
         });
 
         // add eye balls drown by frameShape
-        var frameShapes = ['octa','leaf','roundCorner','petal'];
+        var frameShapes = ['octa', 'round',  'leaf','leafSharp', 'cookie', 'cookie2', 'roundCorner','petal',
+          'circled', 'diamonds'];
         frameShapes.forEach(function(shape){
           drawEyeBallFunc[shape] = function(c,w,t,s,r) { drawFrameAsBall(shape, c,w,t,s,r); };
         });
+
+        drawEyeBallFunc.nine = function(c,w,t,s,r) {
+          for(var i in [0,1,2])
+            for(var j in [0,1,2])
+              drawCircle(c,t*j+t*2,t*i+t*2,t,t,0.5);
+        };
+        drawEyeBallFunc.test = function(c,w,t,s,r) {
+          for(var i in [0,1,2])
+            for(var j in [0,1,2])
+              drawCircle(c,t*j+t*2,t*i+t*2,t,t,0.5);
+        };
 
         // pass design possible options to scope
         var setDefaultDesignOptions = function(designOptions) {
@@ -762,7 +774,7 @@
             var eyeBallShapeFunc = drawEyeBallFunc[design.eyeBallShape] || drawEyeBallFunc.square;
             context.fillStyle = design.eyeBallColor;
             context.lineWidth = 1;
-            var ballSide = tile * 3, eyeRadius = tile * 7 / 2;
+            var ballSide = tile * 3, eyeRadius = tile * 3 / 2;
             if (design.eyeBallShape.substring(0,4)==='star')
               drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
             else
