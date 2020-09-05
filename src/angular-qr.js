@@ -489,6 +489,34 @@
           stokeOrFill(c,fill);
         };
 
+        var drawCrystalWide = function(c,w,t,d,s,r,fill) {
+          var k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+          c.beginPath();
+          c.moveTo(d, d);
+          c.lineTo(sd - p2, d);
+          c.lineTo(sd - d2, p);
+          c.lineTo(sd - d2, sd - d2);
+          c.lineTo(p, sd - d2);
+          c.lineTo(d, sd - p2);
+          c.lineTo(d, d);
+          c.closePath();
+          stokeOrFill(c,fill);
+        };
+
+        var drawCrystal = function(c,w,t,d,s,r,fill) {
+          var k=2, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s+d;
+          c.beginPath();
+          c.moveTo(d, d);
+          c.lineTo(sd - p2, d);
+          c.lineTo(sd - d2, p);
+          c.lineTo(sd - d2, sd - d2);
+          c.lineTo(p, sd - d2);
+          c.lineTo(d, sd - p2);
+          c.lineTo(d, d);
+          c.closePath();
+          stokeOrFill(c,fill);
+        };
+
         var drawLeafSharp = function(c,w,t,d,s,r,fill) {
           var k=2, p=t*k+d, d2=t, b=t/2+d/2, p2=t*k+d, sd=fill? s+t:s+d;
           c.beginPath();
@@ -599,6 +627,12 @@
           },
           round :  function(c,w,t,d,s,r,fill) {
             drawRound(c,w,t,d,s,r,fill);
+          },
+          crystal :  function(c,w,t,d,s,r,fill) {
+            drawCrystal(c,w,t,d,s,r,fill);
+          },
+          crystalWide :  function(c,w,t,d,s,r,fill) {
+            drawCrystalWide(c,w,t,d,s,r,fill);
           },
           leaf :  function(c,w,t,d,s,r,fill) {
             drawLeaf(c,w,t,d,s,r,fill);
@@ -745,14 +779,32 @@
           c.closePath();
           c.fill();
         };
-        drawEyeBallFunc.test = function(c,w,t,s,r) {
-          var x=t*2, l=t*5, p=x+t*3/2, cc=t;
+        drawEyeBallFunc.burger = function(c,w,t,s,r) {
+          var t2 = t*2, rr=0.45;
+          for(var i in [0,1,2]) {
+            drawCircle(c,t2,t*i+t2,t,t,rr);
+            drawCircle(c,t2+t2,t*i+t2,t,t,rr);
+            c.fillRect(t2+t/2,t2+t*i+t*(0.5-rr),t2,t*rr*2);
+          }
+        };
+        drawEyeBallFunc.sausages = function(c,w,t,s,r) {
+          var t2 = t*2, rr=0.45;
+          for(var i in [0,1,2]) {
+            drawCircle(c,t*i+t2,t2,t,t,rr);
+            drawCircle(c,t*i+t2,t2+t2,t,t,rr);
+            c.fillRect(t2+t*i+t*(0.5-rr),t2+t/2,t*rr*2,t2);
+          }
+        };
+        drawEyeBallFunc.crystal = function(c,w,t,s,r) {
+          var x=t*2, l=t*3/2;
           c.beginPath();
           c.moveTo(x,x);
-          c.quadraticCurveTo(p,p-cc,l,x);
-          c.quadraticCurveTo(p+cc,p,l,l);
-          c.quadraticCurveTo(p,p+cc,x,l);
-          c.quadraticCurveTo(p-cc,p,x,x);
+          c.lineTo(x+l,x);
+          c.lineTo(x+s,x+l);
+          c.lineTo(x+s,x+s);
+          c.lineTo(x+l,x+s);
+          c.lineTo(x,x+l);
+          c.lineTo(x,x);
           c.closePath();
           c.fill();
         };
