@@ -101,10 +101,6 @@
             font-size: 14px;
         }
 
-        .code-prompt {
-            font-weight: bold;
-        }
-
         .code-vial {
             color: rgb(108, 143, 167);
         }
@@ -137,7 +133,8 @@
 <div ng-controller="AdaptiveCtrl">
 
     <header>
-        <img id="logoImage" src="logo_image.png" width="200">
+        <!--suppress CheckImageSize -->
+        <img alt="QR Donkey" id="logoImage" src="logo_image.png" width="200">
         <h1 class="text-center title">angular-qr-donkey</h1>
         <p class="text-center title"><i>Fancy QR code generator for AngularJS.</i></p>
 
@@ -185,7 +182,7 @@
         <p>
             <qr text="qrcodeString" ng-click="refreshOnClick()" type-number="typeNumber"
                 correction-level="correctionLevel" size="size" input-mode="inputMode"
-                image="image" design="design" designOptions="designOptions"></qr>
+                image="image" design="design" design-options="designOptions"></qr>
         </p>
 
 
@@ -212,7 +209,7 @@
             <input type="range" id="logoImageScale" class="range" ng-model="design.logoImageScale"
                    min="0.2" max="0.5" step="0.01"/>
 
-        <h3>Text / Link:</h3>
+        <h3><label for="text">Text / Link:</label></h3>
 <!--        <p><label for="text">Text:</label></p>-->
         <p><textarea id="text" class="textarea" ng-model="qrcodeString" placeholder="YOUR TEXT TO ENCODE"></textarea>
         </p>
@@ -329,13 +326,10 @@
       //Logo image
       logoImageElementId: 'logoImage',
       logoImageScale: 0.5,
-      removeBackgroundBehindLogo: true //TODO
-      //TODO MAYBE Border, color
-      //TODO MAYBE BG color
+      removeBackgroundBehindLogo: true
     };
     // console.log('scope.designOptions', $scope.designOptions);
     $scope.refreshOnClick = function () {
-      var str = $scope.qrcodeString;
       $scope.qrcodeString = $scope.qrcodeString + '!';
     }
   }]);

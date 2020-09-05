@@ -125,27 +125,14 @@
         /** design */
         var defaultDesign = {
           // bodyShapes
-          // ['square', 'squareSmall', 'circle', 'circleBig', 'circleSmall',
-          //         'dot', 'diamond', 'mosaic', 'star', 'star4', 'star6', 'star8', 'snowflake',
-          //         'zebra', 'zebraVertical', 'zebraThin', 'zebraThinVertical',
-          //         'star6Vertical', 'star6Horizontal', 'pcbVertical', 'pcbHorizontal', 'circleWideLinked',
-          //         'diamondLinked', 'diamondWideLinked', 'pcbLinked', 'mosaicLinked', 'circleLinked',
-          //         'squareSmallLinked', 'mosaicThinLinked', 'circleThinLinked', 'pcbThinLinked', 'diamondThinLinked',
-          //         'squareSmallThinLinked', 'star8ThinLinked', 'star4ThinLinked'],
-          //
           bodyShape : 'square',
           // Gradients
           // ['none', 'diagonal', 'diagonalLeft', 'horizontal', 'vertical', 'radial', 'radialInverse']
-          //TODO MAYBE Fill pattern https : //developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
           color :       '#000000',
           colorMiddle : '#000000',
           colorFinish : '#000000',
           /** Eye Frames */
           // eyeFrameShapes:
-          // ['square', 'squaredSmall', 'circle', 'octa', 'round', 'leaf', 'leafSharp', 'petal', 'cookie', 'cookie2,
-          // 'dotted', 'dottedTight', 'circled', 'circledTight', 'diamond', 'diamondTight', 'mosaic', 'mosaicTight,
-          // 'starred', 'starredTight', 'starred4', 'starred4Tight', 'starred6', 'starred6Tight', 'starred8', 'starred8Tight,
-          // 'snowflakes', 'snowflakesTight']
           eyeFrameShape :  'square',
           eyeFrameColor :  '#000000',//'#858A8F',
           /** Eye Balls */
@@ -156,9 +143,8 @@
           logoImageElementId :  'logoImage',
           logoImageScale :  0.5,
           removeBackgroundBehindLogo :  true //TODO
-          //TODO Border
-          //TODO BG color
         };
+
         if (!scope.design)
           scope.design = defaultDesign;
         else // apply default design
@@ -167,7 +153,6 @@
         // scope.bodyShape = '';
         // scope.color = '#000000';
         // scope.colorMiddle = '#000000';
-
 
         var drawShiftedSquare = function(c, x, y, w, h, d) {
           c.beginPath();
@@ -573,7 +558,7 @@
           c.quadraticCurveTo(p - cc, p, x, x);
           c.closePath();
           stokeOrFill(c,fill);
-        }
+        };
 
         var drawShapedHelper = function(shape,density,c,w,t,d,s,r,fill) {
           var draw = drawShapeFunc[shape] || drawShapeFunc.circle;
