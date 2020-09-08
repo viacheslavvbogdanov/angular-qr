@@ -144,7 +144,8 @@
           //Logo image
           logoImageElementId :  'logoImage',
           logoImageScale :  0.5,
-          removeBackgroundBehindLogo :  true //TODO
+          outlineLogo :  false, // draws logo white outline
+          clearLogoBackground : false // draws white box behind logo
         };
 
         if (!scope.design)
@@ -903,7 +904,25 @@
             else
               drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
           }
+
           // Logo Image
+          var drawImageOutline = function(context, outlineWidth, image, dx, dy, dWidth, dHeight) {
+            var s = outlineWidth||0;
+            var dArr = [-1,-1, 0,-1, 1,-1, -1,0, 1,0, -1,1, 0,1, 1,1];
+            context.globalCompositeOperation = "source-over";
+            context.filter = 'drop-shadow(0 0 1px white) brightness(1%) invert()';
+            // context.filter = 'drop-shadow(0 0 '+s+'px white) brightness(1%) invert()'; // additional fade
+            for(var i=0; i < dArr.length; i += 2) // rough version
+              context.drawImage(image, dx + dArr[i]*s, dy + dArr[i+1]*s, dWidth, dHeight);
+            // for(var i=-s;i<s;i++) { // more smooth version, but CPU intensive
+            //   context.drawImage(image, dx+i, dy-s, dWidth, dHeight);
+            //   context.drawImage(image, dx-i, dy+s, dWidth, dHeight);
+            //   context.drawImage(image, dx-s, dy+i, dWidth, dHeight);
+            //   context.drawImage(image, dx+s, dy-i, dWidth, dHeight);
+            // }
+            context.filter = 'none';
+          };
+
           var image = document.getElementById(design.logoImageElementId);
           if (image) {
             var aspect = image.naturalHeight / image.naturalWidth;
@@ -911,6 +930,19 @@
             var dHeight = dWidth * aspect;
             var dx = (width - dWidth) / 2;
             var dy = (width - dHeight) / 2;
+            var border = 4;
+            if (design.clearLogoBackground) {
+              context.fillStyle = 'white';
+              context.fillRect(
+              Math.floor((dx-border)/tile)*tile,
+              Math.floor((dy-border)/tile)*tile,
+              Math.ceil((dWidth+border*2)/tile)*tile,
+              Math.ceil((dHeight+border*2)/tile)*tile
+              );
+            }
+            else if (design.outlineLogo)
+              drawImageOutline(context,border, image, dx,dy, dWidth, dHeight);
+
             context.drawImage(image, dx, dy, dWidth, dHeight);
           }
         };
