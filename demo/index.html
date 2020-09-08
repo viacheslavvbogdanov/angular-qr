@@ -308,7 +308,7 @@
     console.log('qrOptions.designOptions',qrOptions.designOptions);
     $scope.designOptions = qrOptions.designOptions;
     $scope.design = {
-      bodyShape: '-pcbThinLinked',
+      bodyShape: 'pcbThinLinked',
       // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
       gradient: 'radialInverse',
       //MAYBE Fill pattern https : //developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
@@ -327,7 +327,7 @@
       logoImageElementId: 'logoImage',
       logoImageScale: 0.4,
       outlineLogo: true,
-      clearLogoBackground: true
+      clearLogoBackground: false
     };
     // console.log('scope.designOptions', $scope.designOptions);
     $scope.refreshOnClick = function () {
