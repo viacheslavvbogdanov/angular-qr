@@ -1,5 +1,4 @@
-//TODO qr render preview
-//MAYBE design option select directive (gradients, body / eye frame / eye ball shapes)
+//TODO MAYBE design option select directive (gradients, body / eye frame / eye ball shapes)
 (function(QRCode){
   'use strict';
 
@@ -979,11 +978,9 @@
                 bodyDrawShape(context, x+1, y+1, w, h, qr, row, col);
             }
           }
-        }
+        };
 
         var render = function(canvas, value, typeNumber, correction, size, inputMode, customDesign){
-          //var preview = 'bodyShape'; //TODO move to params
-          // var preview = false;
 
           var trim = /^\s+|\s+$/g;
           var text = value.replace(trim, '');
