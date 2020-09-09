@@ -297,7 +297,7 @@
 <script>
   angular.module('adaptiveApp', ['ja.qr']).controller('AdaptiveCtrl', ['$scope','qrOptions', function ($scope, qrOptions) {
     $scope.qrcodeString = 'QR DONKEY - THE BEST';
-    $scope.size = 400;
+    $scope.size = 100; //400
     $scope.correctionLevel = 'H';
     $scope.typeNumber = 0;
     $scope.inputMode = '';
@@ -308,7 +308,7 @@
     console.log('qrOptions.designOptions',qrOptions.designOptions);
     $scope.designOptions = qrOptions.designOptions;
     $scope.design = {
-      bodyShape: 'pcbThinLinked',
+      bodyShape: 'circleBig',//'pcbThinLinked',
       // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
       gradient: 'radialInverse',
       //MAYBE Fill pattern https : //developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
@@ -327,7 +327,8 @@
       logoImageElementId: 'logoImage',
       logoImageScale: 0.4,
       outlineLogo: true,
-      clearLogoBackground: false
+      clearLogoBackground: false,
+      preview: 'bodyShape'// 'eyeFrame', 'eyeBall', 'gradient'
     };
     // console.log('scope.designOptions', $scope.designOptions);
     $scope.refreshOnClick = function () {

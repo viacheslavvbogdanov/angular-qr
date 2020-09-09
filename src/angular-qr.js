@@ -876,6 +876,7 @@
 
           var bodyDrawShape = drawShapeFunc[design.bodyShape] || drawShapeFunc.square;
 
+          context.fillStyle = bodyFillStyle;
           for (var row = 0; row < modules; row++) {
             for (var col = 0; col < modules; col++) {
               var x = Math.round(col * tile),
@@ -883,12 +884,9 @@
               var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
                   h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
 
-              if (qr.isDark(row, col)) {
-                if (!isEye(row, col, modules)) {
-                  context.fillStyle = bodyFillStyle;
+              if (qr.isDark(row, col))
+                if (!isEye(row, col, modules))
                   bodyDrawShape(context, x, y, w, h, qr, row, col);
-                }
-              }
             }
           } // for
 
@@ -950,12 +948,43 @@
             }
             else if (design.outlineLogo)
               drawImageOutline(context,border, image, dx,dy, dWidth, dHeight);
-
+            // draw logo image itself
             context.drawImage(image, dx, dy, dWidth, dHeight);
           }
         };
 
+        var drawBodyShapePreview = function(context, size, design){
+          var modules = 8, tile = Math.floor(size/modules);
+          var thumb = [
+            '  #  # #',
+            '### # ##',
+            ' ## ## #',
+            '#   #   ',
+            '##### ##',
+            ' #  #  #',
+            ' ##   ##',
+            '   ### #'];
+          var qr = { isDark : function(r,c) { return thumb[r]?(thumb[r][c]==='#'):false; } };
+          var bodyDrawShape = drawShapeFunc[design.bodyShape] || drawShapeFunc.square;
+
+          context.fillStyle = design.color || '#000';
+
+          for (var row = 0; row < modules; row++) {
+            for (var col = 0; col < modules; col++) {
+              // noinspection DuplicatedCode
+              var x = Math.round(col * tile),  y = Math.round(row * tile);
+              var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
+                  h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
+              if (qr.isDark(row, col))
+                bodyDrawShape(context, x+1, y+1, w, h, qr, row, col);
+            }
+          }
+        }
+
         var render = function(canvas, value, typeNumber, correction, size, inputMode, customDesign){
+          //var preview = 'bodyShape'; //TODO move to params
+          // var preview = false;
+
           var trim = /^\s+|\s+$/g;
           var text = value.replace(trim, '');
 
@@ -966,11 +995,14 @@
           var context = canvas.getContext('2d');
 
           var modules = qr.getModuleCount();
-          var tile = size / modules;
+          var tile = (size / modules);
           canvas.width = canvas.height = size;
 
           if (canvas2D) {
-            draw(context, qr, modules, tile, customDesign);
+            if (customDesign.preview==='bodyShape')
+              drawBodyShapePreview(context, size, customDesign);
+            else
+              draw(context, qr, modules, tile, customDesign);
             scope.canvasImage = canvas.toDataURL() || '';
           }
         };
