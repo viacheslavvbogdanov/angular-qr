@@ -109,10 +109,6 @@
       controller :  'QrCtrl',
       link :  function postlink(scope, element, attrs){
 
-        if (scope.text === undefined) {
-          throw new Error('The "text" attribute is required.');
-        }
-
         var canvas = element.find('canvas')[0];
         // noinspection JSUnresolvedVariable
         var canvas2D = !!$window.CanvasRenderingContext2D;
@@ -1020,9 +1016,12 @@
           canvas.width = canvas.height = size;
 
           if (canvas2D) {
-            if (!customDesign.preview)
+            if (!customDesign.preview) {
+              // if (scope.text === undefined) {
+              //   throw new Error('The "text" attribute is required.');
+              // }
               draw(context, qr, modules, tile, customDesign);
-            else if (customDesign.preview==='bodyShape')
+            } else if (customDesign.preview==='bodyShape')
               drawBodyShapePreview(context, size, customDesign);
             else if (customDesign.preview==='eyeFrame')
               drawEyeFramePreview(context, size, customDesign);
