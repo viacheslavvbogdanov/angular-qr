@@ -125,6 +125,17 @@
         select {
             font-size: xx-large;
         }
+        .qr-preview{
+            border: 4px solid white;
+            border-radius: 8px;
+            padding: 6px 6px 0 6px;
+            margin: 4px;
+            display: inline-block;
+            transition: 0.5s;
+        }
+        .qr-preview:hover{
+            border-color: #E52A3A;
+        }
 
     </style>
 </head>
@@ -180,9 +191,11 @@
         <!--    </p>-->
 
         <p>
-            <qr text="qrcodeString" ng-click="refreshOnClick()" type-number="typeNumber"
-                correction-level="correctionLevel" size="size" input-mode="inputMode"
-                image="image" design="design" design-options="designOptions"></qr>
+<!--            <div class="qr-preview">-->
+                <qr class="qr-preview" text="qrcodeString" ng-click="refreshOnClick()" type-number="typeNumber"
+                    correction-level="correctionLevel" size="size" input-mode="inputMode"
+                    image="image" design="design" design-options="designOptions"></qr>
+<!--            </div>-->
         </p>
 
 
@@ -297,7 +310,7 @@
 <script>
   angular.module('adaptiveApp', ['ja.qr']).controller('AdaptiveCtrl', ['$scope','qrOptions', function ($scope, qrOptions) {
     $scope.qrcodeString = 'QR DONKEY - THE BEST';
-    $scope.size = 100; //400
+    $scope.size = 64; //400
     $scope.correctionLevel = 'H';
     $scope.typeNumber = 0;
     $scope.inputMode = '';
@@ -308,7 +321,7 @@
     console.log('qrOptions.designOptions',qrOptions.designOptions);
     $scope.designOptions = qrOptions.designOptions;
     $scope.design = {
-      bodyShape: 'circleBig',//'pcbThinLinked',
+      bodyShape: 'pcbThinLinked',
       // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
       gradient: 'radialInverse',
       //MAYBE Fill pattern https : //developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createPattern
@@ -328,7 +341,7 @@
       logoImageScale: 0.4,
       outlineLogo: true,
       clearLogoBackground: false,
-      preview: 'bodyShape'// 'eyeFrame', 'eyeBall', 'gradient'
+      preview: 'eyeFrame'// bodyShape, eyeFrame, eyeBall, gradient
     };
     // console.log('scope.designOptions', $scope.designOptions);
     $scope.refreshOnClick = function () {

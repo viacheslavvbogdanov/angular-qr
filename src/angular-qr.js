@@ -852,6 +852,17 @@
           c.setTransform(oldTransform);
         };
 
+        var createFillStyleGradient = function(context, width, design) {
+          var fillStyle = design.color || '#000';
+          if (design.gradient && design.gradient!=='none') {
+            fillStyle = gradientFunc[design.gradient](context, width);
+            fillStyle.addColorStop(0, design.color || '#000');
+            if (design.colorMiddle) fillStyle.addColorStop(0.5, design.colorMiddle);
+            if (design.colorFinish) fillStyle.addColorStop(1.0, design.colorFinish);
+          }
+          return fillStyle
+        }
+
         var draw = function(context, qr, modules, tile, customDesign){
           var design = defaultDesign;
           if (customDesign) for (var a in customDesign) { // noinspection JSUnfilteredForInLoop
@@ -865,17 +876,8 @@
           };
 
           // fill style & gradient
-          var bodyFillStyle = design.color || '#000';
-          if (design.gradient && design.gradient!=='none') {
-            bodyFillStyle = gradientFunc[design.gradient](context, width);
-            bodyFillStyle.addColorStop(0, design.color || '#000');
-            if (design.colorMiddle) bodyFillStyle.addColorStop(0.5, design.colorMiddle);
-            if (design.colorFinish) bodyFillStyle.addColorStop(1.0, design.colorFinish);
-          }
-
           var bodyDrawShape = drawShapeFunc[design.bodyShape] || drawShapeFunc.square;
-
-          context.fillStyle = bodyFillStyle;
+          context.fillStyle = createFillStyleGradient(context, width, design);
           for (var row = 0; row < modules; row++) {
             for (var col = 0; col < modules; col++) {
               var x = Math.round(col * tile),
@@ -904,10 +906,7 @@
             context.fillStyle = design.eyeBallColor;
             context.lineWidth = 1;
             var ballSide = tile * 3, eyeRadius = tile * 3 / 2;
-            if (design.eyeBallShape.substring(0,4)==='star')
-              drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
-            else
-              drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
+            drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
           }
 
           // Logo Image
@@ -953,7 +952,7 @@
         };
 
         var drawBodyShapePreview = function(context, size, design){
-          var modules = 8, tile = Math.floor(size/modules);
+          var modules = 8, tile = Math.floor(size/modules), delta=(size-tile*modules)/2;
           var thumb = [
             '  #  # #',
             '### # ##',
@@ -970,17 +969,42 @@
 
           for (var row = 0; row < modules; row++) {
             for (var col = 0; col < modules; col++) {
-              // noinspection DuplicatedCode
-              var x = Math.round(col * tile),  y = Math.round(row * tile);
+              var x = Math.round(col * tile),
+                  y = Math.round(row * tile);
               var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
                   h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
               if (qr.isDark(row, col))
-                bodyDrawShape(context, x+1, y+1, w, h, qr, row, col);
+                bodyDrawShape(context, x+delta, y+delta, w, h, qr, row, col);
             }
           }
         };
 
-        var render = function(canvas, value, typeNumber, correction, size, inputMode, customDesign){
+        var drawEyeFramePreview = function(context, size, design) {
+          var modules = 7, tile = Math.floor(size/modules), width = size;
+          var delta = tile / 2, side = tile * 7, radius = side / 2;
+          context.fillStyle = design.eyeFrameColor;
+          context.strokeStyle = design.eyeFrameColor;
+          context.lineWidth = tile;
+          var eyeFrameShapeFunc = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
+          eyeFrameShapeFunc(context, width, tile, delta, side, radius);
+        };
+
+        var drawEyeBallPreview = function(context, size, design) {
+          context.fillStyle = design.eyeBallColor;
+          context.lineWidth = 1;
+          var modules=7, tile = Math.floor(size/modules), ballSide = tile * 3,
+            eyeRadius = tile * 3 / 2, width = size;
+          var eyeBallShapeFunc = drawEyeBallFunc[design.eyeBallShape] || drawEyeBallFunc.square;
+          eyeBallShapeFunc(context, width, tile, ballSide, eyeRadius);
+        };
+
+        var drawGradientPreview = function(context, size, design) {
+          context.fillStyle = createFillStyleGradient(context, size, design);
+          context.fillRect(0,0,size,size);
+        };
+
+
+          var render = function(canvas, value, typeNumber, correction, size, inputMode, customDesign){
 
           var trim = /^\s+|\s+$/g;
           var text = value.replace(trim, '');
@@ -996,10 +1020,17 @@
           canvas.width = canvas.height = size;
 
           if (canvas2D) {
-            if (customDesign.preview==='bodyShape')
-              drawBodyShapePreview(context, size, customDesign);
-            else
+            if (!customDesign.preview)
               draw(context, qr, modules, tile, customDesign);
+            else if (customDesign.preview==='bodyShape')
+              drawBodyShapePreview(context, size, customDesign);
+            else if (customDesign.preview==='eyeFrame')
+              drawEyeFramePreview(context, size, customDesign);
+            else if (customDesign.preview==='eyeBall')
+              drawEyeBallPreview(context, size, customDesign);
+            else if (customDesign.preview==='gradient')
+              drawGradientPreview(context, size, customDesign);
+
             scope.canvasImage = canvas.toDataURL() || '';
           }
         };
