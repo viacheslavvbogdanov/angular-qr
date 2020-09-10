@@ -133,7 +133,9 @@
             display: inline-block;
             transition: 0.5s;
         }
-        .qr-preview-selected{
+
+        /*noinspection CssUnusedSymbol*/
+        .qr-preview-selected{ /* used in ng-class */
             border-color: #F56A7A;
 
         }
@@ -203,30 +205,40 @@
 
         <h3>Design attributes:</h3>
 
-        <label for="bodyShape">Body Shape:</label><br/>
-        <select id="bodyShape" ng-model="design.bodyShape" ng-options="x for x in designOptions.bodyShapes">
-        </select><br/>
+        <h4>Gradient</h4>
+<!--        <label for="gradient">Gradient:</label><br/>-->
+        <!--        <select id="gradient" ng-model="design.gradient" ng-options="x for x in designOptions.gradients">-->
+        <!--        </select><br/>-->
+        <qr ng-repeat="x in designOptions.gradients" ng-init="pd.preview='gradient';pd.gradient=x"
+            ng-class="{'qr-preview-selected':design.gradient===x}"
+            class="qr-preview" ng-click="chooseDesign(design,'gradient',x)"  size="48" design="pd"></qr>
+        <br/>
+
+        <h4>Body Shape</h4>
+<!--        <label for="bodyShape">Body Shape:</label><br/>-->
+<!--        <select id="bodyShape" ng-model="design.bodyShape" ng-options="x for x in designOptions.bodyShapes">-->
+<!--        </select><br/>-->
         <qr ng-repeat="x in designOptions.bodyShapes" ng-init="pd.preview='bodyShape';pd.bodyShape=x"
             ng-class="{'qr-preview-selected':design.bodyShape===x}"
-            class="qr-preview" ng-click="chooseDesign(design,'bodyShape',x)"  size="64" design="pd"></qr>
-        <br/>
-        <br/>
-
-        <label for="gradient">Gradient:</label><br/>
-        <select id="gradient" ng-model="design.gradient" ng-options="x for x in designOptions.gradients">
-        </select><br/>
-        <qr ng-repeat="x in designOptions.gradients" ng-init="pd.preview='gradient';pd.gradient=x"
-            class="qr-preview" ng-click="chooseDesign(design,'gradient',x)"  size="64" design="pd"></qr>
+            class="qr-preview" ng-click="chooseDesign(design,'bodyShape',x)"  size="48" design="pd"></qr>
         <br/>
 
-        <label for="eyeFrameShape">Eye Frame Shape:</label><br/>
-        <select id="eyeFrameShape" ng-model="design.eyeFrameShape" ng-options="x for x in designOptions.eyeFrameShapes">
-        </select>
+        <h4>Eye Frame Shape</h4>
+<!--        <label for="eyeFrameShape">Eye Frame Shape:</label><br/>-->
+<!--        <select id="eyeFrameShape" ng-model="design.eyeFrameShape" ng-options="x for x in designOptions.eyeFrameShapes">-->
+<!--        </select><br/>-->
+        <qr ng-repeat="x in designOptions.eyeFrameShapes" ng-init="pd.preview='eyeFrame';pd.eyeFrameShape=x"
+            ng-class="{'qr-preview-selected':design.eyeFrameShape===x}"
+            class="qr-preview" ng-click="chooseDesign(design,'eyeFrameShape',x)"  size="48" design="pd"></qr>
         <br/>
 
-        <label for="eyeBallShape">Eye Ball Shape:</label><br/>
-        <select id="eyeBallShape" ng-model="design.eyeBallShape" ng-options="x for x in designOptions.eyeBallShapes">
-        </select>
+        <h4>Eye Ball Shape</h4>
+<!--        <label for="eyeBallShape">Eye Ball Shape:</label><br/>-->
+<!--        <select id="eyeBallShape" ng-model="design.eyeBallShape" ng-options="x for x in designOptions.eyeBallShapes">-->
+<!--        </select><br/>-->
+        <qr ng-repeat="x in designOptions.eyeBallShapes" ng-init="pd.preview='eyeBall';pd.eyeBallShape=x"
+            ng-class="{'qr-preview-selected':design.eyeBallShape===x}"
+            class="qr-preview" ng-click="chooseDesign(design,'eyeBallShape',x)"  size="48" design="pd"></qr>
         <br/>
 
         <label for="logoImageScale">Logo Image Size:</label>
@@ -332,6 +344,7 @@
     // console.log('options',options);
     console.log('qrOptions.designOptions',qrOptions.designOptions);
     $scope.designOptions = qrOptions.designOptions;
+    // QR Design
     $scope.design = {
       bodyShape: 'pcbThinLinked',
       // Gradient :  diagonal, diagonalLeft, horizontal, vertical, radial, radialInverse
@@ -346,16 +359,21 @@
       // square, circle, octa, round, leaf, petal,
       eyeFrameShape: 'petalCaved',
       eyeFrameColor: 'red',//'#858A8F',
-      eyeBallShape: 'petalCaved',
+      eyeBallShape: 'octa',
       eyeBallColor: '#2F0A43',
       //Logo image
       logoImageElementId: 'logoImage',
       logoImageScale: 0.4,
       outlineLogo: true,
-      clearLogoBackground: false,
+      clearLogoBackground: false
       // preview: 'gradient'// bodyShape, eyeFrame, eyeBall, gradient
     };
-    $scope.pd = Object.assign({},$scope.design);
+    // Preview Design
+    //$scope.pd = Object.assign({},$scope.design);
+    $scope.pd = {color: 'black',
+      colorMiddle: 'red',
+      colorFinish: 'white'
+    };
     // console.log('scope.designOptions', $scope.designOptions);
     $scope.chooseDesign = function (design,prop,value) {
       design[prop]=value;

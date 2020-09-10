@@ -103,6 +103,7 @@
         size :  '=',
         text :  '=',
         image :  '=',
+        // preview :  '=',
         design: '=',
         designOptions: '='
       },
@@ -140,7 +141,8 @@
           logoImageElementId :  'logoImage',
           logoImageScale :  0.5,
           outlineLogo :  false, // draws logo white outline
-          clearLogoBackground : false // draws white box behind logo
+          clearLogoBackground : false, // draws white box behind logo
+          preview : false
         };
 
         if (!scope.design)
@@ -442,7 +444,7 @@
         };
 
         var drawOcta = function(c,w,t,d,s,r,fill) {
-          var k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=fill? s+t:s+d;
+          var k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=fill? s:s+d;
           c.beginPath();
           c.moveTo(p,d);
           c.lineTo(sd-p2,d);
@@ -856,8 +858,8 @@
             if (design.colorMiddle) fillStyle.addColorStop(0.5, design.colorMiddle);
             if (design.colorFinish) fillStyle.addColorStop(1.0, design.colorFinish);
           }
-          return fillStyle
-        }
+          return fillStyle;
+        };
 
         var draw = function(context, qr, modules, tile, customDesign){
           var design = defaultDesign;
@@ -948,7 +950,7 @@
         };
 
         var drawBodyShapePreview = function(context, size, design){
-          var modules = 8, tile = Math.floor(size/modules), delta=(size-tile*modules)/2;
+          var modules = 6, tile = Math.floor(size/modules), delta=(size-tile*modules)/2;
           var thumb = [
             '  #  # #',
             '### # ##',
@@ -977,21 +979,25 @@
 
         var drawEyeFramePreview = function(context, size, design) {
           var modules = 7, tile = Math.floor(size/modules), width = size;
-          var delta = tile / 2, side = tile * 7, radius = side / 2;
+          var delta = tile / 2, side = tile * 7, radius = side / 2, d = -(size-side)/2;
           context.fillStyle = design.eyeFrameColor;
           context.strokeStyle = design.eyeFrameColor;
           context.lineWidth = tile;
           var eyeFrameShapeFunc = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
+          context.translate(-d,-d);
           eyeFrameShapeFunc(context, width, tile, delta, side, radius);
+          context.translate(d,d);
         };
 
         var drawEyeBallPreview = function(context, size, design) {
           context.fillStyle = design.eyeBallColor;
           context.lineWidth = 1;
-          var modules=7, tile = Math.floor(size/modules), ballSide = tile * 3,
-            eyeRadius = tile * 3 / 2, width = size;
+          var modules=4, tile = Math.floor(size/modules), ballSide = tile * 3,
+            eyeRadius = tile * 3 / 2, width = size, d=tile*2-(width-ballSide)/2;
           var eyeBallShapeFunc = drawEyeBallFunc[design.eyeBallShape] || drawEyeBallFunc.square;
+          context.translate(-d,-d);
           eyeBallShapeFunc(context, width, tile, ballSide, eyeRadius);
+          context.translate(d,d);
         };
 
         var drawGradientPreview = function(context, size, design) {
