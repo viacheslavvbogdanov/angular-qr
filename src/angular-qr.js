@@ -883,8 +883,7 @@
               var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
                   h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
 
-              if (qr.isDark(row, col))
-                if (!isEye(row, col, modules))
+              if (qr.isDark(row, col) && !isEye(row, col, modules))
                   bodyDrawShape(context, x, y, w, h, qr, row, col);
             }
           } // for
