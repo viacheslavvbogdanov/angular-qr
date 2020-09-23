@@ -1086,11 +1086,14 @@
 
             var throttleTimeout = null
             scope.$watch('design', function(value, old){
-              scope.design = scope.getDesign(scope.design);
-              if(throttleTimeout) $timeout.cancel(throttleTimeout);
-              throttleTimeout = $timeout(function() { renderQR(); }, 100);
+              if (value !== old) {
+                scope.design = scope.getDesign();
+                if (throttleTimeout) $timeout.cancel(throttleTimeout);
+                throttleTimeout = $timeout(function () {
+                  renderQR();
+                }, 500);
+              }
             }, true); //deep watch
-
           });
 
         }
