@@ -1011,7 +1011,7 @@
           };
 
 
-          var render = function(canvas, value, typeNumber, correction, size, inputMode, design){
+          var render = function(canvas, value, typeNumber, correction, size, inputMode, design, image){
             var context = canvas.getContext('2d');
             context.imageSmoothingQuality = 'high'; //"low" || "medium" || "high"
 
@@ -1041,7 +1041,7 @@
               else if (design.preview==='gradient')
                 drawGradientPreview(context, size, design);
 
-              // scope.canvasImage = canvas.toDataURL() || ''; //TODO FIX Uncaught DOMException: Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported.
+              if (image) scope.canvasImage = canvas.toDataURL();
             }
           };
 
@@ -1056,14 +1056,13 @@
                 /*global Image */
                 logoImage = new Image();
                 logoImage.onload = function () {
-                  console.log('logoImage.onload', logoImage.onload);
                   renderQR();
                 };
                 logoImage.crossOrigin='anonymous';
                 logoImage.src = logoImageUrl;
               }
             }
-            render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE, scope.design);
+            render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE, scope.design, scope.image);
           };
           scope.design = scope.getDesign();
           renderQR();
