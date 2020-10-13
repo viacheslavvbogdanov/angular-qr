@@ -28,8 +28,8 @@
         return $scope.text || '';
       };
 
-      $scope.getDesign = function(design){
-        return $scope.design || design || {};
+      $scope.getDesign = function(){
+        return $scope.design || {};
       };
 
       $scope.getDesignOptions = function(storedDesignOptions){
@@ -119,18 +119,22 @@
           scope.CORRECTION = scope.getCorrection();
           scope.SIZE = scope.getSize();
           scope.INPUT_MODE = scope.getInputMode(scope.TEXT);
+          scope.design = scope.getDesign();
           scope.canvasImage = '';
           /** design */
           var defaultDesign = {
             // bodyShapes
             bodyShape : 'square',
             // Gradients
+            enableGradient: false,
             // ['none', 'diagonal', 'diagonalLeft', 'horizontal', 'vertical', 'radial', 'radialInverse']
+            gradient: 'none',
             color :       '#000000',
             colorMiddle : '#000000',
             colorFinish : '#000000',
+            colorBackground : '#FFFFFF',
+            // colorBackground : '#FFFFFF',
             /** Eye Frames */
-            // eyeFrameShapes:
             eyeFrameShape :  'square',
             eyeFrameColor :  '#000000',//'#858A8F',
             /** Eye Balls */
@@ -138,17 +142,12 @@
             eyeBallShape :  'square',
             eyeBallColor :  '#000000',
             //Logo image
-            logoImageElementId :  'logoImage',
+            logoImageUrl : null,
             logoImageScale :  0.5,
             outlineLogo :  false, // draws logo white outline
             clearLogoBackground : false, // draws white box behind logo
             preview : false
           };
-
-          if (!scope.design)
-            scope.design = defaultDesign;
-          else // apply default design
-            for (var a in defaultDesign) { scope[a] = defaultDesign[a]; }
 
           // scope.bodyShape = '';
           // scope.color = '#000000';
@@ -852,7 +851,7 @@
 
           var createFillStyleGradient = function(context, width, design) {
             var fillStyle = design.color || '#000';
-            if (design.gradient && design.gradient!=='none') {
+            if (design.enableGradient && design.gradient && design.gradient!=='none') {
               fillStyle = gradientFunc[design.gradient](context, width);
               fillStyle.addColorStop(0, design.color || '#000');
               if (design.colorMiddle) fillStyle.addColorStop(0.5, design.colorMiddle);
@@ -861,13 +860,15 @@
             return fillStyle;
           };
 
+          var logoImage = null;
+
           var draw = function(context, qr, modules, tile, customDesign){
-            var design = defaultDesign;
-            if (customDesign) for (var a in customDesign) { // noinspection JSUnfilteredForInLoop
-              design[a] = customDesign[a];
-            }
+            var design = customDesign || defaultDesign;
 
             var width  = modules*tile;
+
+            context.fillStyle = design.colorBackground || '#FFFFFF';
+            context.fillRect(0,0, width, width);
 
             var isEye = function(row, col) {
               return (row<7 && col<7) || (row<7 && (modules-col<=7)) || ((modules-row<=7) && col<7);
@@ -876,12 +877,14 @@
             // fill style & gradient
             var bodyDrawShape = drawShapeFunc[design.bodyShape] || drawShapeFunc.square;
             context.fillStyle = createFillStyleGradient(context, width, design);
+
+            // noinspection DuplicatedCode
             for (var row = 0; row < modules; row++) {
               for (var col = 0; col < modules; col++) {
                 var x = Math.round(col * tile),
-                  y = Math.round(row * tile);
+                    y = Math.round(row * tile);
                 var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
-                  h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
+                    h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
 
                 if (qr.isDark(row, col) && !isEye(row, col, modules))
                   bodyDrawShape(context, x, y, w, h, qr, row, col);
@@ -924,10 +927,12 @@
               context.filter = 'none';
             };
 
-            var image = document.getElementById(design.logoImageElementId);
+            var image = logoImage;
+
             if (image) {
               var aspect = image.naturalHeight / image.naturalWidth;
               var dWidth = width * design.logoImageScale;
+
               var dHeight = dWidth * aspect;
               var dx = (width - dWidth) / 2;
               var dy = (width - dHeight) / 2;
@@ -964,12 +969,13 @@
 
             context.fillStyle = design.color || '#000';
 
+            // noinspection DuplicatedCode
             for (var row = 0; row < modules; row++) {
               for (var col = 0; col < modules; col++) {
                 var x = Math.round(col * tile),
-                  y = Math.round(row * tile);
+                    y = Math.round(row * tile);
                 var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
-                  h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
+                    h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
                 if (qr.isDark(row, col))
                   bodyDrawShape(context, x+delta, y+delta, w, h, qr, row, col);
               }
@@ -1005,48 +1011,66 @@
           };
 
 
-          var render = function(canvas, value, typeNumber, correction, size, inputMode, customDesign){
-
-            var trim = /^\s+|\s+$/g;
-            var text = value.replace(trim, '');
-
-            var qr = new QRCode(typeNumber, correction, inputMode);
-            qr.addData(text);
-            qr.make();
-
+          var render = function(canvas, value, typeNumber, correction, size, inputMode, design){
             var context = canvas.getContext('2d');
+            context.imageSmoothingQuality = 'high'; //"low" || "medium" || "high"
 
-            var modules = qr.getModuleCount();
-            var tile = (size / modules);
             canvas.width = canvas.height = size;
 
             if (canvas2D) {
-              if (!customDesign.preview) {
+              if (!design.preview) {
                 // if (scope.text === undefined) {
                 //   throw new Error('The "text" attribute is required.');
                 // }
-                draw(context, qr, modules, tile, customDesign);
-              } else if (customDesign.preview==='bodyShape')
-                drawBodyShapePreview(context, size, customDesign);
-              else if (customDesign.preview==='eyeFrame')
-                drawEyeFramePreview(context, size, customDesign);
-              else if (customDesign.preview==='eyeBall')
-                drawEyeBallPreview(context, size, customDesign);
-              else if (customDesign.preview==='gradient')
-                drawGradientPreview(context, size, customDesign);
+                var trim = /^\s+|\s+$/g;
+                var text = value.replace(trim, '');
 
-              scope.canvasImage = canvas.toDataURL() || '';
+                var qr = new QRCode(typeNumber, correction, inputMode);
+                qr.addData(text);
+                qr.make();
+                var modules = qr.getModuleCount();
+                var tile = (size / modules);
+
+                draw(context, qr, modules, tile, design);
+              } else if (design.preview==='bodyShape')
+                drawBodyShapePreview(context, size, design);
+              else if (design.preview==='eyeFrameShape')
+                drawEyeFramePreview(context, size, design);
+              else if (design.preview==='eyeBallShape')
+                drawEyeBallPreview(context, size, design);
+              else if (design.preview==='gradient')
+                drawGradientPreview(context, size, design);
+
+              // scope.canvasImage = canvas.toDataURL() || ''; //TODO FIX Uncaught DOMException: Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported.
             }
           };
 
+          var oldLogoImageUrl = null;
           var renderQR = function () {
+            var logoImageUrl = scope.design.logoImageUrl;
+            if (oldLogoImageUrl!==logoImageUrl) {
+              oldLogoImageUrl = logoImageUrl;
+              if (!logoImageUrl) {
+                logoImage=null;
+              } else {
+                /*global Image */
+                logoImage = new Image();
+                logoImage.onload = function () {
+                  console.log('logoImage.onload', logoImage.onload);
+                  renderQR();
+                };
+                logoImage.crossOrigin='anonymous';
+                logoImage.src = logoImageUrl;
+              }
+            }
             render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE, scope.design);
           };
+          scope.design = scope.getDesign();
           renderQR();
 
           // Watchers
-          $timeout(function(){
-            scope.$watch('text', function(value, old){
+          $timeout(function () {
+            scope.$watch('text', function (value, old) {
               if (value !== old) {
                 scope.TEXT = scope.getText();
                 scope.INPUT_MODE = scope.getInputMode(scope.TEXT);
@@ -1054,7 +1078,7 @@
               }
             });
 
-            scope.$watch('correctionLevel', function(value, old){
+            scope.$watch('correctionLevel', function (value, old) {
               if (value !== old) {
                 scope.CORRECTION = scope.getCorrection();
                 renderQR();
@@ -1062,7 +1086,7 @@
               }
             });
 
-            scope.$watch('typeNumber', function(value, old){
+            scope.$watch('typeNumber', function (value, old) {
               if (value !== old) {
                 scope.TYPE_NUMBER = scope.getTypeNumber();
                 renderQR();
@@ -1070,23 +1094,23 @@
               }
             });
 
-            scope.$watch('size', function(value, old){
+            scope.$watch('size', function (value, old) {
               if (value !== old) {
                 scope.SIZE = scope.getSize();
                 renderQR();
               }
             });
 
-            scope.$watch('inputMode', function(value, old){
+            scope.$watch('inputMode', function (value, old) {
               if (value !== old) {
                 scope.INPUT_MODE = scope.getInputMode(scope.TEXT);
                 renderQR();
               }
             });
 
-            var throttleTimeout = null
-            scope.$watch('design', function(value, old){
-              if (value !== old) {
+            var throttleTimeout = null;
+            scope.$watch('design', function (value, old) {
+              if (!angular.equals(value,old)) {
                 scope.design = scope.getDesign();
                 if (throttleTimeout) $timeout.cancel(throttleTimeout);
                 throttleTimeout = $timeout(function () {
@@ -1095,7 +1119,6 @@
               }
             }, true); //deep watch
           });
-
         }
       };
     }]);
