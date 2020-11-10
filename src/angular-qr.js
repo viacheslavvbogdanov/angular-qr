@@ -103,13 +103,13 @@
           size :  '=',
           text :  '=',
           image :  '=',
-          // preview :  '=',
+          svg :  '=',
+          svgInterface: '=',
           design: '=',
           designOptions: '='
         },
         controller :  'QrCtrl',
         link :  function postlink(scope, element, attrs){
-
           var canvas = element.find('canvas')[0];
           // noinspection JSUnresolvedVariable
           var canvas2D = !!$window.CanvasRenderingContext2D;
@@ -167,7 +167,8 @@
           var drawCircle = function(c, x, y, w, h, r) {
             var w2 = w/2, h2 = h/2;
             c.beginPath();
-            c.ellipse(x+w2,y+h2, w*r, h*r, 0, 0, Math.PI*2);
+            // c.ellipse(x+w2,y+h2, w*r, h*r, 0, 0, Math.PI*2);
+            c.arc(x+w2,y+h2, w*r, 0, Math.PI*2);
             c.closePath();
             c.fill();
           };
@@ -378,12 +379,14 @@
             vertical :      function(c,w) {  return c.createLinearGradient(0,0, 0, w);  },
             radial :        function(c,w) {
               var r=w/2;
-              return c.createRadialGradient(r,r, r, r, r,0);
-            },
+              return c.createRadialGradient(r,r, 0, r, r,r);
+
+            }/*,
             radialInverse : function(c,w) {
               var r=w/2;
-              return c.createRadialGradient(r,r, 0, r, r,r);
-            }
+              return c.createRadialGradient(r,r, r, r, r,0);
+
+            }*/
           };
           var stokeOrFill = function (c,fill) {
             if (fill) c.fill(); else c.stroke();
@@ -592,7 +595,6 @@
           // };
 
           var drawAllEyeFrames = function(draw,c,w,t,d,s,r) {
-            var oldTransform = c.getTransform();
             draw(c,w,t,d,s,r); // top left eye
             c.rotate(Math.PI/2);
             c.translate(0,-w);
@@ -601,7 +603,9 @@
             c.rotate(-Math.PI);
             c.translate(-w,0);
             draw(c,w,t,d,s,r); // bottom left eye
-            c.setTransform(oldTransform);
+            // restore original transform
+            c.translate(w,0);
+            c.rotate(Math.PI/2);
           };
 
           // noinspection JSUnusedGlobalSymbols
@@ -810,7 +814,6 @@
           drawEyeBallFunc.petalCaved = function(c,w,t,s) {
             var d=0, k=1, p=t*k+d, d2=d*2, p2=t*k+d2, sd=s;
             // d=t*2;
-            var oldTransform = c.getTransform();
             c.translate(t*2,t*2);
             c.beginPath();
             c.moveTo(p,d);
@@ -823,7 +826,7 @@
             c.quadraticCurveTo(d,d,p,d);
             c.closePath();
             c.fill();
-            c.setTransform(oldTransform);
+            c.translate(-t*2,-t*2);
           };
 
 
@@ -837,7 +840,6 @@
           setDefaultDesignOptions( qrOptions.designOptions);
 
           var drawAllEyeBalls = function(draw,c,w,t,s,r) {
-            var oldTransform = c.getTransform();
             draw(c,w,t,s,r); // top left eye
             c.rotate(Math.PI/2);
             c.translate(0,-w);
@@ -846,7 +848,9 @@
             c.rotate(-Math.PI);
             c.translate(-w,0);
             draw(c,w,t,s,r); // bottom left eye
-            c.setTransform(oldTransform);
+
+            c.translate(w,0);
+            c.rotate(Math.PI/2);
           };
 
           var createFillStyleGradient = function(context, width, design) {
@@ -881,55 +885,61 @@
             // noinspection DuplicatedCode
             for (var row = 0; row < modules; row++) {
               for (var col = 0; col < modules; col++) {
+                // noinspection DuplicatedCode
                 var x = Math.round(col * tile),
                     y = Math.round(row * tile);
-                var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
-                    h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
+                var w = (Math.ceil((col+1) * tile) - Math.floor(col * tile)),
+                    h = (Math.ceil((row+1) * tile) - Math.floor(row * tile));
 
                 if (qr.isDark(row, col) && !isEye(row, col, modules))
                   bodyDrawShape(context, x, y, w, h, qr, row, col);
               }
             } // for
 
-            // Eyes Frames
-            {
-              var eyeFrameShapeFunc = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
-              context.fillStyle = design.eyeFrameColor;
-              context.strokeStyle = design.eyeFrameColor;
-              context.lineWidth = tile;
-              var delta = tile / 2, side = tile * 7, radius = side / 2;
-              drawAllEyeFrames(eyeFrameShapeFunc, context, width, tile, delta, side, radius);
-            }
             // Eyes Balls
             {
               var eyeBallShapeFunc = drawEyeBallFunc[design.eyeBallShape] || drawEyeBallFunc.square;
+              context.beginPath();
               context.fillStyle = design.eyeBallColor;
-              context.lineWidth = 1;
+              context.lineWidth = 0;
+              context.strokeStyle = "white";
               var ballSide = tile * 3, eyeRadius = tile * 3 / 2;
               drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
+              context.closePath();
+            }
+
+            // Eyes Frames
+            {
+              var eyeFrameShapeFunc = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
+              var delta = tile / 2, side = tile * 7, radius = side / 2;
+              context.beginPath();
+              context.fillStyle   = design.eyeFrameColor;
+              context.strokeStyle = design.eyeFrameColor;
+              context.lineWidth = tile;
+              drawAllEyeFrames(eyeFrameShapeFunc, context, width, tile, delta, side, radius);
+              context.closePath();
+
             }
 
             // Logo Image
             var drawImageOutline = function(context, outlineWidth, image, dx, dy, dWidth, dHeight) {
+              if (context.isSvgContext) return false; // do not draw outline at SVG context
               var s = outlineWidth||0;
               var dArr = [-1,-1, 0,-1, 1,-1, -1,0, 1,0, -1,1, 0,1, 1,1];
               context.globalCompositeOperation = "source-over";
               context.filter = 'drop-shadow(0 0 1px white) brightness(1%) invert()';
               // context.filter = 'drop-shadow(0 0 '+s+'px white) brightness(1%) invert()'; // additional fade
-              for(var i=0; i < dArr.length; i += 2) // rough version
-                context.drawImage(image, dx + dArr[i]*s, dy + dArr[i+1]*s, dWidth, dHeight);
-              // for(var i=-s;i<s;i++) { // more smooth version, but CPU intensive
-              //   context.drawImage(image, dx+i, dy-s, dWidth, dHeight);
-              //   context.drawImage(image, dx-i, dy+s, dWidth, dHeight);
-              //   context.drawImage(image, dx-s, dy+i, dWidth, dHeight);
-              //   context.drawImage(image, dx+s, dy-i, dWidth, dHeight);
-              // }
+              for(var i=0; i < dArr.length-1; i += 2) {// rough version
+                context.drawImage(image, dx + dArr[i] * s, dy + dArr[i + 1] * s, dWidth, dHeight);
+              }
+
               context.filter = 'none';
             };
 
+
             var image = logoImage;
 
-            if (image) {
+            if (image && image.complete && image.naturalHeight && image.naturalWidth) {
               var aspect = image.naturalHeight / image.naturalWidth;
               var dWidth = width * design.logoImageScale;
 
@@ -972,6 +982,7 @@
             // noinspection DuplicatedCode
             for (var row = 0; row < modules; row++) {
               for (var col = 0; col < modules; col++) {
+                // noinspection DuplicatedCode
                 var x = Math.round(col * tile),
                     y = Math.round(row * tile);
                 var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
@@ -1010,39 +1021,67 @@
             context.fillRect(0,0,size,size);
           };
 
-
+          // TODO get context and size instead of canvas
           var render = function(canvas, value, typeNumber, correction, size, inputMode, design, image){
             var context = canvas.getContext('2d');
             context.imageSmoothingQuality = 'high'; //"low" || "medium" || "high"
 
-            canvas.width = canvas.height = size;
+            canvas.width  = size;
+            canvas.height = size;
 
-            if (canvas2D) {
-              if (!design.preview) {
-                // if (scope.text === undefined) {
-                //   throw new Error('The "text" attribute is required.');
-                // }
-                var trim = /^\s+|\s+$/g;
-                var text = value.replace(trim, '');
+            var renderAtContext = function(context) {
+              if (canvas2D) {
+                if (!design.preview) {
+                  // if (scope.text === undefined) {
+                  //   throw new Error('The "text" attribute is required.');
+                  // }
+                  var trim = /^\s+|\s+$/g;
+                  var text = value.replace(trim, '');
 
-                var qr = new QRCode(typeNumber, correction, inputMode);
-                qr.addData(text);
-                qr.make();
-                var modules = qr.getModuleCount();
-                var tile = (size / modules);
+                  var qr = new QRCode(typeNumber, correction, inputMode);
+                  qr.addData(text);
+                  qr.make();
+                  var modules = qr.getModuleCount();
+                  var tile = (size / modules);
 
-                draw(context, qr, modules, tile, design);
-              } else if (design.preview==='bodyShape')
-                drawBodyShapePreview(context, size, design);
-              else if (design.preview==='eyeFrameShape')
-                drawEyeFramePreview(context, size, design);
-              else if (design.preview==='eyeBallShape')
-                drawEyeBallPreview(context, size, design);
-              else if (design.preview==='gradient')
-                drawGradientPreview(context, size, design);
+                  draw(context, qr, modules, tile, design);
+                } else if (design.preview === 'bodyShape')
+                  drawBodyShapePreview(context, size, design);
+                else if (design.preview === 'eyeFrameShape')
+                  drawEyeFramePreview(context, size, design);
+                else if (design.preview === 'eyeBallShape')
+                  drawEyeBallPreview(context, size, design);
+                else if (design.preview === 'gradient')
+                  drawGradientPreview(context, size, design);
 
-              if (image) scope.canvasImage = canvas.toDataURL();
+                // Render image from canvas
+              }
+            };
+
+            renderAtContext(context);
+            if (image) scope.canvasImage = canvas.toDataURL();
+
+            // SVG support
+            if (scope.svg && scope.svgInterface) {
+              var svgContext = new C2S({
+                ctx:context,
+                width:canvas.width,
+                height:canvas.height
+              });
+              svgContext.isSvgContext = true;
+
+              renderAtContext(svgContext);
+
+              scope.svgInterface.serializedSvg = svgContext.getSerializedSvg;
+              scope.svgInterface.serializedSvgData = svgContext.getSerializedSvg();
+              scope.svgInterface.svgElement = svgContext.getSvg();
+              //TODO remove
+              var place = document.querySelector('span#svgPlaceholder');
+              place.innerHTML = '';
+              place.appendChild(scope.svgInterface.svgElement);
+
             }
+
           };
 
           var oldLogoImageUrl = null;
@@ -1062,8 +1101,11 @@
                 logoImage.src = logoImageUrl;
               }
             }
+            // TODO pass context and size
             render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE, scope.design, scope.image);
+            // TODO if svg render on SVG
           };
+
           scope.design = scope.getDesign();
           renderQR();
 
