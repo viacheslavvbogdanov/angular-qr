@@ -896,32 +896,34 @@
               }
             } // for
 
+            { // THIS IS canvas2svg FIX - it prevents eye balls stroke lines
+              context.fillStyle = 'rgba(255,255,255,0)';
+              context.fillRect(0, 0, width, width);
+            }
+
             // Eyes Balls
             {
               var eyeBallShapeFunc = drawEyeBallFunc[design.eyeBallShape] || drawEyeBallFunc.square;
-              context.beginPath();
               context.fillStyle = design.eyeBallColor;
               context.lineWidth = 0;
-              context.strokeStyle = "white";
+              // context.strokeStyle = "white";
               var ballSide = tile * 3, eyeRadius = tile * 3 / 2;
               drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
-              context.closePath();
             }
+
 
             // Eyes Frames
             {
               var eyeFrameShapeFunc = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
               var delta = tile / 2, side = tile * 7, radius = side / 2;
-              context.beginPath();
               context.fillStyle   = design.eyeFrameColor;
               context.strokeStyle = design.eyeFrameColor;
               context.lineWidth = tile;
               drawAllEyeFrames(eyeFrameShapeFunc, context, width, tile, delta, side, radius);
-              context.closePath();
-
             }
 
             // Logo Image
+
             var drawImageOutline = function(context, outlineWidth, image, dx, dy, dWidth, dHeight) {
               if (context.isSvgContext) return false; // do not draw outline at SVG context
               var s = outlineWidth||0;
@@ -932,10 +934,8 @@
               for(var i=0; i < dArr.length-1; i += 2) {// rough version
                 context.drawImage(image, dx + dArr[i] * s, dy + dArr[i + 1] * s, dWidth, dHeight);
               }
-
               context.filter = 'none';
             };
-
 
             var image = logoImage;
 
@@ -992,6 +992,8 @@
               }
             }
           };
+
+
 
           var drawEyeFramePreview = function(context, size, design) {
             var modules = 7, tile = Math.floor(size/modules), width = size;
