@@ -1075,6 +1075,7 @@
               scope.svgInterface.serializedSvg = svgContext.getSerializedSvg;
               scope.svgInterface.serializedSvgData = svgContext.getSerializedSvg();
               scope.svgInterface.svgElement = svgContext.getSvg();
+              /** SVG element preview for development and testing */
               // var place = document.querySelector('span#svgPlaceholder');
               // place.innerHTML = '';
               // place.appendChild(scope.svgInterface.svgElement);
