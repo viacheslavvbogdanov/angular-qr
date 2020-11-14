@@ -1,4 +1,3 @@
-//TODO MAYBE design option select directive (gradients, body / eye frame / eye ball shapes)
 (function(QRCode){
   'use strict';
 
@@ -1023,7 +1022,6 @@
             context.fillRect(0,0,size,size);
           };
 
-          // TODO get context and size instead of canvas
           var render = function(canvas, value, typeNumber, correction, size, inputMode, design, image){
             var context = canvas.getContext('2d');
             context.imageSmoothingQuality = 'high'; //"low" || "medium" || "high"
@@ -1077,10 +1075,9 @@
               scope.svgInterface.serializedSvg = svgContext.getSerializedSvg;
               scope.svgInterface.serializedSvgData = svgContext.getSerializedSvg();
               scope.svgInterface.svgElement = svgContext.getSvg();
-              //TODO remove
-              var place = document.querySelector('span#svgPlaceholder');
-              place.innerHTML = '';
-              place.appendChild(scope.svgInterface.svgElement);
+              // var place = document.querySelector('span#svgPlaceholder');
+              // place.innerHTML = '';
+              // place.appendChild(scope.svgInterface.svgElement);
 
             }
 
@@ -1103,9 +1100,7 @@
                 logoImage.src = logoImageUrl;
               }
             }
-            // TODO pass context and size
             render(canvas, scope.TEXT, scope.TYPE_NUMBER, scope.CORRECTION, scope.SIZE, scope.INPUT_MODE, scope.design, scope.image);
-            // TODO if svg render on SVG
           };
 
           scope.design = scope.getDesign();
