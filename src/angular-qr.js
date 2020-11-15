@@ -895,30 +895,34 @@
               }
             } // for
 
-            { // THIS IS canvas2svg FIX - it prevents eye balls stroke lines
-              context.fillStyle = 'rgba(255,255,255,0)';
-              context.fillRect(0, 0, width, width);
-            }
+            // { // THIS IS canvas2svg FIX - it prevents eye balls stroke lines
+            //   context.fillStyle = 'rgba(255,255,255,0)';
+            //   context.fillRect(0, 0, width, width);
+            // }
 
             // Eyes Balls
             {
+              context.save && context.save();
               var eyeBallShapeFunc = drawEyeBallFunc[design.eyeBallShape] || drawEyeBallFunc.square;
               context.fillStyle = design.eyeBallColor;
               context.lineWidth = 0;
               // context.strokeStyle = "white";
               var ballSide = tile * 3, eyeRadius = tile * 3 / 2;
               drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
+              context.restore && context.restore();
             }
 
 
             // Eyes Frames
             {
+              context.save && context.save();
               var eyeFrameShapeFunc = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
               var delta = tile / 2, side = tile * 7, radius = side / 2;
               context.fillStyle   = design.eyeFrameColor;
               context.strokeStyle = design.eyeFrameColor;
               context.lineWidth = tile;
               drawAllEyeFrames(eyeFrameShapeFunc, context, width, tile, delta, side, radius);
+              context.restore && context.restore();
             }
 
             // Logo Image
@@ -1076,9 +1080,11 @@
               scope.svgInterface.serializedSvgData = svgContext.getSerializedSvg();
               scope.svgInterface.svgElement = svgContext.getSvg();
               /** SVG element preview for development and testing */
-              // var place = document.querySelector('span#svgPlaceholder');
-              // place.innerHTML = '';
-              // place.appendChild(scope.svgInterface.svgElement);
+              var place = document.querySelector('span#svgPreviewPlaceholder');
+              if (place) {
+                place.innerHTML = '';
+                place.appendChild(scope.svgInterface.svgElement);
+              }
 
             }
 

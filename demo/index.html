@@ -197,12 +197,19 @@
         <!--    </p>-->
 
         <p>
-            <qr ng-init="design.preview=null" text="qrcodeString" ng-click="refreshOnClick()" type-number="typeNumber"
-                correction-level="correctionLevel" size="size" input-mode="inputMode"
-                image="image" design="design" design-options="designOptions"
+            <qr ng-init="design.preview=null"
+                text="qrcodeString"
+                ng-click="refreshOnClick()"
+                type-number="typeNumber"
+                correction-level="correctionLevel"
+                size="size"
+                input-mode="inputMode"
+                image="image"
+                design="design"
+                design-options="designOptions"
                 svg="true" svg-interface="svgInterface"></qr>
 
-            <span id="svgPlaceholder"></span>
+            <span style="margin-left:64px" id="svgPreviewPlaceholder"></span>
 
         </p>
 
@@ -340,7 +347,7 @@
 <script>
   angular.module('adaptiveApp', ['ja.qr']).controller('AdaptiveCtrl', ['$scope','qrOptions', function ($scope, qrOptions) {
     $scope.qrcodeString = 'QR DONKEY - THE BEST';
-    $scope.size = 300; //400
+    $scope.size = 330; //400
     $scope.correctionLevel = 'H';
     $scope.typeNumber = 0;
     $scope.inputMode = '';
@@ -357,6 +364,7 @@
       color: '#0000A6',
       colorMiddle: '#351143',
       colorFinish: '#A60000',
+      colorBackground : '#FFFFFF',
       // Eyes
       eyeFrameShape: 'petalCaved',
       eyeFrameColor: 'red',//'#858A8F',
