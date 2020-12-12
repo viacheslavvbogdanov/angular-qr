@@ -928,12 +928,11 @@
             // Logo Image
 
             var drawImageOutline = function(context, outlineWidth, image, dx, dy, dWidth, dHeight) {
-              if (context.isSvgContext) return false; // do not draw outline at SVG context
+              // if (context.isSvgContext) return false; // do not draw outline at SVG context
               var s = outlineWidth||0;
               var dArr = [-1,-1, 0,-1, 1,-1, -1,0, 1,0, -1,1, 0,1, 1,1];
-              context.globalCompositeOperation = "source-over";
-              context.filter = 'drop-shadow(0 0 1px white) brightness(1%) invert()';
-              // context.filter = 'drop-shadow(0 0 '+s+'px white) brightness(1%) invert()'; // additional fade
+              context.filter = context.isSvgContext ?
+                'whiteFilter' : 'drop-shadow(0 0 1px white) brightness(1%) invert()';
               for(var i=0; i < dArr.length-1; i += 2) {// rough version
                 context.drawImage(image, dx + dArr[i] * s, dy + dArr[i + 1] * s, dWidth, dHeight);
               }
@@ -949,7 +948,7 @@
               var dHeight = dWidth * aspect;
               var dx = (width - dWidth) / 2;
               var dy = (width - dHeight) / 2;
-              var border = 4;
+              var border = width*0.01;
               if (design.clearLogoBackground) {
                 context.fillStyle = 'white';
                 context.fillRect(
