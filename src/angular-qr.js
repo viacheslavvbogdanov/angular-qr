@@ -886,9 +886,9 @@
               for (var col = 0; col < modules; col++) {
                 // noinspection DuplicatedCode
                 var x = Math.round(col * tile),
-                    y = Math.round(row * tile);
+                  y = Math.round(row * tile);
                 var w = (Math.ceil((col+1) * tile) - Math.floor(col * tile)),
-                    h = (Math.ceil((row+1) * tile) - Math.floor(row * tile));
+                  h = (Math.ceil((row+1) * tile) - Math.floor(row * tile));
 
                 if (qr.isDark(row, col) && !isEye(row, col, modules))
                   bodyDrawShape(context, x, y, w, h, qr, row, col);
@@ -902,27 +902,27 @@
 
             // Eyes Balls
             {
-              context.save && context.save();
+              if (context.save) { context.save(); }
               var eyeBallShapeFunc = drawEyeBallFunc[design.eyeBallShape] || drawEyeBallFunc.square;
               context.fillStyle = design.eyeBallColor;
               context.lineWidth = 0;
               // context.strokeStyle = "white";
               var ballSide = tile * 3, eyeRadius = tile * 3 / 2;
               drawAllEyeBalls(eyeBallShapeFunc, context, width, tile, ballSide, eyeRadius);
-              context.restore && context.restore();
+              if (context.restore) { context.restore(); }
             }
 
 
             // Eyes Frames
             {
-              context.save && context.save();
+              if (context.save) { context.save(); }
               var eyeFrameShapeFunc = drawEyeFrameFunc[design.eyeFrameShape] || drawEyeFrameFunc.square;
               var delta = tile / 2, side = tile * 7, radius = side / 2;
               context.fillStyle   = design.eyeFrameColor;
               context.strokeStyle = design.eyeFrameColor;
               context.lineWidth = tile;
               drawAllEyeFrames(eyeFrameShapeFunc, context, width, tile, delta, side, radius);
-              context.restore && context.restore();
+              if (context.restore) { context.restore(); }
             }
 
             // Logo Image
@@ -987,9 +987,9 @@
               for (var col = 0; col < modules; col++) {
                 // noinspection DuplicatedCode
                 var x = Math.round(col * tile),
-                    y = Math.round(row * tile);
+                  y = Math.round(row * tile);
                 var w = (Math.ceil((col + 1) * tile) - Math.floor(col * tile)),
-                    h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
+                  h = (Math.ceil((row + 1) * tile) - Math.floor(row * tile));
                 if (qr.isDark(row, col))
                   bodyDrawShape(context, x+delta, y+delta, w, h, qr, row, col);
               }
